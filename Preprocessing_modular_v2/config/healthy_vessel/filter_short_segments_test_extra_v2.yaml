@@ -1,0 +1,15 @@
+# biffilter_v2 params (alpha_cont=1.0, alpha_bif=0.30)
+paths:
+  train_dir: /workspace/SynVA_V1/derived_data/test_extra/prepared
+  val_dir:   /workspace/SynVA_V1/derived_data/test_extra/prepared
+  test_dir:  /workspace/SynVA_V1/derived_data/test_extra/prepared
+
+  output_root:   /workspace/SynVA_V1/derived_data/test_extra/biffilter_v2
+  metadata_path: /workspace/SynVA_V1/derived_data/test_extra/biffilter_v2/filter_short_segments_metadata.json
+
+params:
+  pattern: "*.npy"
+  k: 39
+  alpha_cont: 1.0
+  alpha_bif: 0.30
+  eps_radius: 1.0e-6

@@ -1,0 +1,93 @@
+# Flow Matching + Physio v11 — v10 + logit-normal time sampling.
+#
+# v10 → v11 delta:
+#   - time_sampling : uniform -> logit_normal
+#   - time_logit_normal_mean : 0.0   (peak at t = sigmoid(0) = 0.5)
+#   - time_logit_normal_std  : 1.0   (~31% mass in [0.4, 0.6], ~1% below 0.1)
+#
+# Motivation:
+#   At t = 0.5 the noisy state x_t mixes x_0 and noise in equal proportion,
+#   so the velocity prediction problem is hardest there. Uniform t-sampling
+#   spends equal training mass on every t, which under-emphasizes the hard
+#   middle. Logit-normal — the standard SD3 / Flux choice — concentrates
+#   training mass around t = 0.5.
+#
+#   See empirical density (verified in tests):
+#     t=0.05  : ~1× lower than uniform
+#     t=0.50  : ~1.6× higher than uniform
+#     t=0.95  : ~1× lower than uniform
+#
+# Everything else identical to physio_v10_v2_clean.yaml — same GT-aligned
+# physio targets, same from-scratch schedule, same dataset, same architecture.
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_100depth_prepared_biffilter_v1_norm_relpos_nodecp_v1/train
+  val_dir:   derived_data/TreesSplines_k_count_100depth_prepared_biffilter_v1_norm_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching_Physio/output/physio_v11_v2_clean
+  feature_stats: Stage2_FlowMatching/feature_stats_healthy.npz
+  init_from: null
+  init_strict: false
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 384
+  n_heads: 8
+  n_layers: 10
+  d_ff: 1536
+  max_nodes: 256
+  dropout: 0.1
+  tree_attn_hops: 0
+  self_conditioning: true
+  depth_in_geometry: true
+
+params:
+  lr: 3.0e-4
+  weight_decay: 0.01
+  batch_size: 128
+  batch_size_val: 128
+  epochs: 400
+  patience: 80
+  warmup_steps: 1000
+  seed: 42
+  device: 0
+  num_workers: 4
+  rollout_interval: 25
+  rollout_steps: 50
+  rollout_samples: 8
+  save_every: 50
+  ema_decay: 0.999
+  resume: false
+
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  # >>> v11 change: bias t-sampling toward t = 0.5 <<<
+  time_sampling: logit_normal
+  time_logit_normal_mean: 0.0
+  time_logit_normal_std: 1.0
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0
+  radius_weight: 3.0
+  eccentricity_weight: 0.0
+  circularity_weight: 1.0
+  normal_tangent_weight: 0.5
+  normal_smooth_weight: 0.3
+
+physio:
+  murray_weight: 0.0
+  murray_gamma: 3.0
+  bifurcation_angle_weight: 1.0
+  target_angle_deg: 120.0
+  angle_margin_deg: 30.0
+  tapering_weight: 0.0
+  symmetry_weight: 1.0
+  symmetry_target: 0.78
+  symmetry_margin: 0.22
+  sibling_cosine_weight: 3.0
+  sibling_cosine_target: -0.5
+  depth_radius_weight: 0.5
+  depth_radius_target_decay: 1.05

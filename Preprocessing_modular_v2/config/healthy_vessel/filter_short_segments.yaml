@@ -1,0 +1,20 @@
+# Filter degenerate short parent->child segments (biffilter_v1).
+#
+# Continuation nodes (parent k=1) merged when dist/r_parent < alpha_cont.
+# Bifurcation children (parent k=2) merged only when dist/r_parent < alpha_bif
+# (anatomical bifurcations sit at ratio ~1.0 by definition).
+paths:
+  train_dir: /data/Output_healthy_vessel/TreesSplines_k_count_100depth_prepared/train
+  val_dir:   /data/Output_healthy_vessel/TreesSplines_k_count_100depth_prepared/val
+  test_dir:  /data/Output_healthy_vessel/TreesSplines_k_count_100depth_prepared/test
+
+  output_root:    /data/Output_healthy_vessel/TreesSplines_k_count_100depth_prepared_biffilter_v1
+  metadata_path:  /data/Output_healthy_vessel/TreesSplines_k_count_100depth_prepared_biffilter_v1/filter_short_segments_metadata.json
+
+params:
+  pattern: "*.npy"
+  overwrite: false
+  k: 39                # geom dims per node (3 xyz + 24 cps + 12 knots)
+  alpha_cont: 0.5      # continuation children below this fraction of parent ring radius are merged
+  alpha_bif: 0.15      # bifurcation children below this fraction are merged (mostly numerical duplicates)
+  eps_radius: 1.0e-6

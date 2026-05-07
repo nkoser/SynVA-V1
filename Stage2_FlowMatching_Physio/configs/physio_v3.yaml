@@ -1,0 +1,82 @@
+# Flow Matching + Physiological Constraints v3
+#
+# Fix: Bifurcation angle loss normalization bug
+#
+# Changes from v2:
+#   1. CRITICAL FIX: angle loss now computed in radians (no /180² normalization)
+#      - v2: angle loss was ~0.004 raw → 0.3% of total loss (effectively invisible)
+#      - v3: angle loss ~0.8 raw → ~15-20% of total loss (strong gradient signal)
+#   2. Bifurcation angle weight: 3.0 → 1.0
+#      - Radians-based loss is ~200× larger than old deg²/180² loss
+#      - Weight=1.0 gives ~20% contribution to total (well-balanced)
+#   3. Fine-tune from v2 best checkpoint (preserves Murray + other gains)
+#   4. Lower lr for fine-tuning stability
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/train
+  val_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching_Physio/output/physio_v3
+  feature_stats: Stage2_FlowMatching/feature_stats.npz
+  init_from: Stage2_FlowMatching_Physio/output/physio_v2/best_model.pt
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 384
+  n_heads: 8
+  n_layers: 10
+  d_ff: 1536
+  max_nodes: 256
+  dropout: 0.1
+  tree_attn_hops: 0
+  self_conditioning: true
+
+params:
+  lr: 5.0e-5
+  weight_decay: 0.01
+  batch_size: 32
+  batch_size_val: 32
+  epochs: 400
+  patience: 80
+  warmup_steps: 200
+  seed: 42
+  device: 0
+  num_workers: 4
+  rollout_interval: 25
+  rollout_steps: 50
+  rollout_samples: 8
+  save_every: 50
+  ema_decay: 0.999
+  resume: false
+
+# Base v8 losses (kept identical)
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  time_sampling: uniform
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0
+  radius_weight: 3.0
+  eccentricity_weight: 0.0
+
+# Physiological constraint losses
+physio:
+  murray_weight: 2.0
+  murray_gamma: 3.0
+
+  # Bifurcation angle — NOW WITH FIXED LOSS SCALE
+  # Loss operates in radians: relu(|θ_rad - target_rad| - margin_rad)²
+  # For generated 38° vs target 120°: loss ≈ 0.82 per bifurcation
+  # Weight=1.0 → ~20% of total loss (was 0.3% in v2!)
+  bifurcation_angle_weight: 1.0
+  target_angle_deg: 120.0
+  angle_margin_deg: 30.0
+
+  tapering_weight: 1.0
+
+  symmetry_weight: 1.0
+  symmetry_target: 0.67
+  symmetry_margin: 0.15

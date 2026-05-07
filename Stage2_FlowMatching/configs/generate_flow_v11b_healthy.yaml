@@ -1,0 +1,25 @@
+paths:
+  checkpoint: Stage2_FlowMatching/output/flow_v11b_healthy/best_model.pt
+  val_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_healthy_vessel_relpos_nodecp_v1/test
+  feature_stats: Stage2_FlowMatching/feature_stats_healthy.npz
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 256
+  n_heads: 8
+  n_layers: 6
+  d_ff: 1024
+  max_nodes: 256
+  tree_attn_hops: 0
+  self_conditioning: true
+  cfg_dropout: 0.1
+
+params:
+  n_steps: 100
+  n_samples: 100
+  seed: 42
+  device: 0
+  output_dir: Stage2_FlowMatching/generated/flow_v11b_healthy
+  use_ema: true

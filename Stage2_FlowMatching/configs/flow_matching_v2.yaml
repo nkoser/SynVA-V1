@@ -1,0 +1,48 @@
+# Flow Matching v2 — Key improvements:
+#   1. Self-conditioning (50% prob during training → model sees estimate of x_1)
+#   2. Logit-normal time sampling (more gradient signal near t=0 and t=1)
+#   3. EMA (decay=0.9999) for smoother generation weights
+#   4. Higher position loss weight (3.0) — positions are critical for visual quality
+#   5. Slightly larger model (d=384/10L) for more capacity
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/train
+  val_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching/output/flow_v2
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 384
+  n_heads: 8
+  n_layers: 10
+  d_ff: 1536
+  max_nodes: 256
+  dropout: 0.1
+  tree_attn_hops: 0
+  self_conditioning: true
+
+params:
+  batch_size: 32
+  batch_size_val: 32
+  lr: 1.5e-4
+  weight_decay: 0.01
+  epochs: 600
+  patience: 100
+  warmup_steps: 1000
+  seed: 42
+  device: 0
+  num_workers: 4
+  ema_decay: 0.999
+  rollout_interval: 25
+  rollout_steps: 50
+  rollout_samples: 8
+  save_every: 50
+
+loss:
+  pos_weight: 3.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  time_sampling: uniform
+  self_cond_prob: 0.5

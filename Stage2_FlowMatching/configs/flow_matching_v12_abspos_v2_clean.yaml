@@ -1,0 +1,61 @@
+# Auto-generated from flow_matching_v12_abspos_healthy.yaml by submit_all_stage2_v2_clean.sh
+# v2_clean dataset variant (biffilter_v1).
+# Flow Matching v12 - healthy_vessel with absolute centerline positions.
+#
+# Purpose:
+#   Test whether removing parent-relative position accumulation fixes the
+#   random/spaghetti reconstructions observed in healthy generated trees.
+#   CPs stay node-local; only columns 1:4 are converted to absolute positions
+#   inside the dataset loader.
+
+data:
+  absolute_positions: true
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_100depth_prepared_biffilter_v1_norm_relpos_nodecp_v1/train
+  val_dir: derived_data/TreesSplines_k_count_100depth_prepared_biffilter_v1_norm_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching/output/flow_v12_abspos_v2_clean
+  feature_stats: Stage2_FlowMatching/feature_stats_healthy_abspos.npz
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 256
+  n_heads: 8
+  n_layers: 6
+  d_ff: 1024
+  max_nodes: 256
+  dropout: 0.25
+  tree_attn_hops: 0
+  self_conditioning: true
+  cfg_dropout: 0.1
+
+params:
+  lr: 1.0e-4
+  weight_decay: 0.05
+  batch_size: 32
+  batch_size_val: 32
+  epochs: 400
+  patience: 60
+  warmup_steps: 1500
+  seed: 42
+  device: 0
+  num_workers: 4
+  rollout_interval: 25
+  rollout_steps: 50
+  rollout_samples: 8
+  save_every: 50
+  ema_decay: 0.999
+  resume: false
+
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  time_sampling: uniform
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0
+  radius_weight: 3.0
+  eccentricity_weight: 0.0

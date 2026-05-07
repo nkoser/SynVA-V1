@@ -1,0 +1,59 @@
+# TreeGNN v11 = v8 (best so far) + AGGRESSIVE alignment (45° threshold).
+#
+# Where v10 used align_ring_planes with tilt_cos_threshold=0.5 (≥60°),
+# v11 uses 0.707 (≥45°) — fixes 3× more rings (16% vs 7% of all rings).
+# tilt>45° rate per tree drops from 10.93% (orig) to 3.81% (aligned2),
+# ~65% reduction.
+#
+# Same loss recipe as v8/v10 (focalpos λ=4, depth-warp, logit_normal).
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_aligned2_norm_relpos_nodecp_v1/train
+  val_dir:   derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_aligned2_norm_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching_TreeGNN/output/treegnn_v11_focalpos_aligned2_short
+  feature_stats: Stage2_FlowMatching/feature_stats_healthy_decap_dense_v2_aligned2.npz
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 512
+  d_model: 256
+  n_heads: 8
+  n_layers: 10
+  max_nodes: 384
+  dropout: 0.1
+  self_conditioning: true
+  global_attn_every: 3
+  depth_warp_alpha: 0.5
+
+params:
+  lr: 2.0e-4
+  weight_decay: 0.01
+  batch_size: 64
+  batch_size_val: 32
+  epochs: 400
+  patience: 60
+  warmup_steps: 500
+  seed: 42
+  device: 0
+  num_workers: 8
+  rollout_interval: 50
+  rollout_steps: 25
+  rollout_samples: 2
+  save_every: 50
+  ema_decay: 0.999
+  resume: false
+
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  time_sampling: logit_normal
+  time_logit_normal_mean: 0.0
+  time_logit_normal_std: 1.0
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0
+  radius_weight: 3.0
+  pos_focal_lambda: 4.0
+  pos_focal_sigma: 1.0

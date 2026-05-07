@@ -1,0 +1,35 @@
+paths:
+  metadata_path: "/workspace/SynVA_V1/Stage2_BranchTopology/tokens/branch_topology_relpos_nodecp_v1/branch_topology_metadata.json"
+  train_dir: "/workspace/SynVA_V1/Stage2_BranchTopology/tokens/branch_topology_relpos_nodecp_v1/train"
+  val_dir: "/workspace/SynVA_V1/Stage2_BranchTopology/tokens/branch_topology_relpos_nodecp_v1/val"
+  output_dir: "/workspace/SynVA_V1/Stage2_BranchTopology/output/VesselGPT_GPT2_BRANCH_TOPOLOGY_RELPOS_NODECP_V1_RUN01"
+  best_model_dir: "/workspace/SynVA_V1/Stage2_BranchTopology/output/VesselGPT_GPT2_BRANCH_TOPOLOGY_RELPOS_NODECP_V1_RUN01/best-gpt2"
+
+params:
+  batch_size: 32
+  epochs: 120
+  lr: 0.0005
+  scheduler: "cosine"
+  warmup_steps: 0
+  weight_decay: 0.02
+  shuffle: true
+  seed: 12
+  device: 0
+  best_metric: "val"
+  train_limit: null
+  val_limit: null
+
+model:
+  n_embd: 32
+  n_layer: 2
+  n_head: 4
+  resid_pdrop: 0.2
+  attn_pdrop: 0.2
+  embd_pdrop: 0.2
+
+wandb:
+  enabled: false
+  project: "branch_topology"
+  entity: null
+  mode: "online"
+  run_name: "branch_topology_relpos_nodecp_v1_run01"

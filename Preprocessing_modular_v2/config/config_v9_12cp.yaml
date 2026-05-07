@@ -1,0 +1,74 @@
+# v9 pipeline — 12 control points per B-spline ring (compromise: v7=8, v8=16).
+# nest=16 → 12 CPs, n_knot=16, k=55
+# Combined with v7 adaptive resampling.
+
+paths:
+  raw_root: '/data/prepared_meshes'
+  output_root: '/data/Output_minimal_data_prepared_meshs3'
+
+  # Reuse v7 centerlines (same adaptive resampling)
+  centerlines_resampled: '/data/Output_minimal_data_prepared_meshs3/centerlinesResampled_v7'
+  centerlines_resampled_obj: '/data/Output_minimal_data_prepared_meshs3/centerlinesResampledOBJ_v7'
+  splines_coef: '/data/Output_minimal_data_prepared_meshs3/splines_v9/coeficientes'
+  splines_knots: '/data/Output_minimal_data_prepared_meshs3/splines_v9/knots'
+  grafos_splines: '/data/Output_minimal_data_prepared_meshs3/grafosSplines_v9'
+  trees_splines:  '/data/Output_minimal_data_prepared_meshs3/TreesSplines_v9'
+
+params:
+  raw_mesh_patterns:
+    - '*/01_mesh/*.obj'
+    - '*/01_Mesh/*.obj'
+    - '*_models/*/surface/*.vtp'
+  raw_mesh_datasets: ['aneux']
+  raw_mesh_dataset_separator: '_'
+
+  # Reuse v7 adaptive resampling
+  resample_method: step
+  resample_step: 0.04
+  resample_use_radius: true
+  resample_base_step: 0.04
+  resample_step_min: 0.008
+  resample_step_max: 0.04
+  resample_radius_scale: 0.3
+  resample_radius_mode: drds
+  resample_drds_threshold: 0.05
+  resample_drds_boost: 4.0
+  resample_curv_threshold: 3.0
+  resample_curv_boost: 1.0
+  resample_junction_window: 0.02
+  resample_junction_factor: 0.5
+  resample_junction_degree: 3
+  resample_max_points_per_branch: null
+
+  # ── KEY CHANGE: 12 control points ─────────────────────────────────────
+  n_cp: 12
+  spline_fit_nest: 16              # nest = n_cp + 4 = 16
+  # ────────────────────────────────────────────────────────────────────────
+
+  spline_fit_mode: robust
+  spline_fit_resample_only_if_needed: true
+  spline_fit_min_points: 12
+  spline_fit_resample: 128
+  spline_fallback_recenter: true
+  spline_fill_missing_with_nearest_valid: true
+  spline_fit_canonical_start: false
+  spline_fit_s: null
+  spline_fit_s_scale: 0.01
+  spline_fit_max_retries: 4
+  spline_fit_retry_factor: 10.0
+
+  normalize_overwrite: false
+
+flags:
+  copy_raw_data: false
+  normalize_meshes: false
+  extract_centerlines: false
+  resample_centerlines: false
+  centerlines_to_obj: false
+  vessels_to_obj: false
+  radius_arrays: false
+  splines: true                    # Fit splines with nest=16 → 12 CPs
+  graphs: false
+  trees: false
+  graphs_splines: true             # Rebuild graphs (new spline format)
+  trees_splines: true              # Rebuild trees (k=55)

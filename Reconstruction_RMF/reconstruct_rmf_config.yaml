@@ -1,0 +1,52 @@
+# RMF-based vessel mesh reconstruction
+# ──────────────────────────────────────
+# Reconstructs triangle meshes directly from B-spline cross-section rings
+# stored in the VesselGPT .npy files, using Rotation-Minimizing Frames
+# for twist-free ring alignment — NO marching cubes.
+#
+# Run:
+#   python -m Reconstruction_RMF.reconstruct_rmf --config reconstruct_rmf_config.yaml
+#   # or from the project root:
+#   python Reconstruction_RMF/reconstruct_rmf.py --config reconstruct_rmf_config.yaml
+
+paths:
+  input:      /workspace/SynVA_V1/Stage2_FlowMatching_Physio/generated/physio_v2/npy_gt
+  output_dir: /workspace/SynVA_V1/Stage2_FlowMatching_Physio/generated/physio_v2/meshes_compare_gt/rmf
+
+params:
+  # Tree deserialization
+  k:      39
+  mode:   pre_order_kcount
+  pattern: "*.npy"
+  max_files: null       # set to a small number for quick tests
+  overwrite: true
+
+  # ── Ring sampling ───────────────────────────────────────────────────────
+  # Number of vertices per cross-section ring.
+  # Higher → smoother cross-sections but more faces. 32–64 is typical.
+  n_pts: 32
+
+  # ── Densification ───────────────────────────────────────────────────────
+  # Insert interpolated rings between node positions for a smoother surface.
+  # target_spacing controls arc-length distance between consecutive rings.
+  use_densify:    true
+  target_spacing: 0.003     # ~3 mm; decrease for denser/smoother result
+  max_rings:      800       # safety cap per branch segment
+
+  # ── End caps ────────────────────────────────────────────────────────────
+  # Seal open tube ends with flat disc caps (watertight output).
+  open_ends: false
+
+  # ── Post-processing ─────────────────────────────────────────────────────
+  # Taubin smoothing (non-shrinking, good for removing marching-cubes-style
+  # staircase artifacts from the discrete ring stitching).
+  smooth_iterations: 15
+  smooth_relaxation: 0.5
+
+  # Drop small disconnected components (floats, caps from degenerate nodes).
+  min_component_ratio: 0.005
+
+  # ── Output ──────────────────────────────────────────────────────────────
+  output_ext: ".obj"
+  file_progress: true
+  verbose: false          # print per-file mesh stats

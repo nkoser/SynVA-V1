@@ -1,0 +1,13 @@
+# Fast variant of reconstruct_healthy_template_biffix.yaml.
+# Disables the second Poisson pass and lowers depths/samples ~2× for ~3× speedup.
+# Mesh quality at branch joints is minimally lower — fine for eval metrics
+# (paired pos_mae, centerline ACD/HD95, distributional MMD/COV).
+method: poisson_perseg
+poisson_depth: 8
+poisson_n_cap_radial: 8
+poisson_repoisson: false             # was true — biggest single speedup
+poisson_repoisson_depth: 8           # was 9 — only matters if repoisson re-enabled
+poisson_repoisson_samples: 60000     # was 120000 — halved
+iso_remesh: false
+iso_remesh_factor: 2.0
+iso_remesh_iter: 3

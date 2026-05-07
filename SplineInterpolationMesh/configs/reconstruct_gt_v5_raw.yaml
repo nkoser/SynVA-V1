@@ -1,0 +1,30 @@
+# Reconstruct meshes from v5 trees in raw kcount format (absolute coords)
+# For direct comparison with v6 — no normalization needed.
+
+paths:
+  input: /data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_100depth_v5
+  output_dir: SplineInterpolationMesh/output/gt_v5_raw_sdf_mc
+
+params:
+  pattern: "*.npy"
+  max_files: 5
+  overwrite: true
+  skip_rotations: true
+  convert_to_absolute: false
+  output_ext: ".obj"
+
+  target_spacing: 0.005
+  n_ring_pts: 64
+
+  mc_resolution: 256
+  mc_padding: 0.02
+  mc_n_neighbors: 3
+  mc_smooth_k: 0.01
+  mc_level: 0.0
+  mc_narrow_band_factor: 3.0
+  mc_chunk_size: 200000
+  sdf_smooth_sigma: 1.0
+  sdf_erosion: 0.002
+
+  smooth_iterations: 10
+  decimate_ratio: 0

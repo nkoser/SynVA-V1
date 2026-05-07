@@ -1,0 +1,48 @@
+# Feature normalization for prepared tree datasets.
+# Learns stats from train split and applies to train/val/test.
+
+paths:
+  train_dir: /data/Output_minimal_data/TreesSplines_k_count_70depth_prepared/train
+  val_dir: /data/Output_minimal_data/TreesSplines_k_count_70depth_prepared/val
+  test_dir: /data/Output_minimal_data/TreesSplines_k_count_70depth_prepared/test
+
+  # Required when params.in_place is false.
+  output_root: /data/Output_minimal_data/TreesSplines_k_count_70depth_prepared_norm
+
+  # Optional; default is <output_root>/normalization_stats.json
+  stats_path: /data/Output_minimal_data/TreesSplines_k_count_70depth_prepared_norm/normalization_stats.json
+
+params:
+  pattern: "*.npy"
+
+  # robust_clip | maxabs_clip | zscore_clip | geometry_clip
+  method: geometry_clip
+
+  # For robust_clip: quantile of |x - median| used as scale.
+  quantile: 99.9
+
+  # Final clipping after scaling.
+  clip_value: 1.0
+
+  # Leave k-token unchanged, normalize only continuous channels.
+  feature_start: 1
+  feature_end: null
+
+  # geometry_clip: preserve geometric relations by using one shared affine
+  # transform for xyz + spline control-point channels.
+  geometry_isotropic: true
+
+  # Keep knots unchanged by default to preserve valid spline parameterization.
+  # In geometry_clip mode this now also skips clipping for knot channels.
+  geometry_normalize_knots: false
+  geometry_knots_quantile: 99.9
+
+  # Keep root xyz exactly zero after normalization (only if already ~0 before).
+  preserve_root_zero_xyz: true
+  root_position: first
+  root_xyz_indices: [1, 2, 3]
+  root_eps: 1e-8
+
+  eps: 1e-6
+  in_place: false
+  overwrite: false

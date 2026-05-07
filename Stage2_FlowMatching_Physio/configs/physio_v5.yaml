@@ -1,0 +1,99 @@
+# Flow Matching + Physiological Constraints v5
+#
+# Key changes vs v4:
+#   1. depth_in_geometry: Continuous normalized depth [0,1] injected directly
+#      into the geometry projection, alongside the existing discrete depth
+#      embedding. This gives the model a direct, smooth depth signal when
+#      generating control point sizes.
+#
+#   2. depth_radius_loss: Two-part loss that enforces radius decreasing with
+#      tree depth:
+#        a) LOCAL: squared penalty when r_child > target_decay × r_parent
+#           (stronger than the existing linear tapering loss)
+#        b) GLOBAL: penalizes positive Pearson correlation between depth and
+#           CP spread across the entire tree
+#
+# Root cause this addresses:
+#   Despite all generated models having local child/parent ratio ~0.98,
+#   the *global* trend shows CP spread INCREASING with depth:
+#     GT:  depth 0 → 0.073, depth 9 → 0.059  (DECREASING ✓)
+#     v4:  depth 0 → 0.109, depth 9 → 0.244  (INCREASING ✗, ~2× at leaves)
+#
+# Architecture change: geom_proj input dim goes from 40 → 41, so we need
+# partial weight loading (init_strict: false) from v4.
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/train
+  val_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching_Physio/output/physio_v5
+  feature_stats: Stage2_FlowMatching/feature_stats.npz
+  init_from: Stage2_FlowMatching_Physio/output/physio_v4/best_model.pt
+  init_strict: false
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 384
+  n_heads: 8
+  n_layers: 10
+  d_ff: 1536
+  max_nodes: 256
+  dropout: 0.1
+  tree_attn_hops: 0
+  self_conditioning: true
+  depth_in_geometry: true
+
+params:
+  lr: 3.0e-5
+  weight_decay: 0.01
+  batch_size: 32
+  batch_size_val: 32
+  epochs: 400
+  patience: 80
+  warmup_steps: 200
+  seed: 42
+  device: 0
+  num_workers: 4
+  rollout_interval: 25
+  rollout_steps: 50
+  rollout_samples: 8
+  save_every: 50
+  ema_decay: 0.999
+  resume: false
+
+# Base v8 losses
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  time_sampling: uniform
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0
+  radius_weight: 3.0
+  eccentricity_weight: 0.0
+
+# Physiological constraint losses
+physio:
+  murray_weight: 2.0
+  murray_gamma: 3.0
+
+  bifurcation_angle_weight: 1.0
+  target_angle_deg: 120.0
+  angle_margin_deg: 30.0
+
+  tapering_weight: 1.0
+
+  symmetry_weight: 1.0
+  symmetry_target: 0.67
+  symmetry_margin: 0.15
+
+  sibling_cosine_weight: 3.0
+  sibling_cosine_target: -0.5
+
+  # NEW v5: Depth-radius decay loss
+  # target_decay=0.95 → expect ≥5% radius decrease per generation step
+  # weight=3.0 → strong signal to correct the inverted depth-radius trend
+  depth_radius_weight: 3.0
+  depth_radius_target_decay: 0.95

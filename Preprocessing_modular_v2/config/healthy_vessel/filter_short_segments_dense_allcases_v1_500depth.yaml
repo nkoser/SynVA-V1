@@ -1,0 +1,15 @@
+paths:
+  train_dir: /workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_allcases_dense_v1_prepared/train
+  val_dir:   /workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_allcases_dense_v1_prepared/val
+  test_dir:  /workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_allcases_dense_v1_prepared/test
+
+  output_root:   /workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_allcases_dense_v1_prepared_biffilter_v1
+  metadata_path: /workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_allcases_dense_v1_prepared_biffilter_v1/filter_short_segments_metadata.json
+
+params:
+  pattern: "*.npy"
+  overwrite: false
+  k: 39
+  alpha_cont: 0.5
+  alpha_bif: 0.15
+  eps_radius: 1.0e-6

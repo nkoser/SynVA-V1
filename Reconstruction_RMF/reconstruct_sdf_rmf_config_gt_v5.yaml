@@ -1,0 +1,42 @@
+input_dir:  Stage2_FlowMatching_Physio/generated/physio_v2/npy_gt_v5_norm
+output_dir: Stage2_FlowMatching_Physio/generated/physio_v2/meshes_compare_gt/rmf_sdf_gt_v5_norm
+
+params:
+  k: 39
+  mode: pre_order_kcount
+
+  # SDF backend (identical to current rmf_sdf config)
+  use_cuda: true
+  recon_mode: legacy
+  legacy_variant: robust
+
+  fallback_radius: 0.01
+  min_radius: 0.005
+  radius_cap: 0.20
+  sanity_percentile: 90
+  sanity_threshold: 0.25
+  smooth_union_k: 0.005
+
+  # Leaf-end endcap reduction: shrinks the last ring of each branch in-place
+  # (no new node added) so the endcap hemisphere radius = min(leaf_taper_min_r,
+  # 40% × leaf_ring_radius).  Only applied when leaf ring radius > taper_r × 1.1
+  # and taper_r ≥ 0.010.  Reduces the visible hemisphere bump at vessel endpoints
+  # while keeping the mesh topology intact (56/60 watertight maintained).
+  leaf_taper: true
+  leaf_taper_min_r: 0.018   # max endcap radius (actual = min(this, 40% × leaf_r))
+  # leaf_taper_dist: 0.0   # unused (no ghost node added)
+
+  centerline_samples: 1500
+  centerline_smooth: 0.0
+  centerline_t_mode: optimize
+  spline_samples: 128
+
+  step: 0.004
+  bounds_pad_abs: 0.02
+
+  smooth_iterations: 20
+  min_component_ratio: 0.03
+
+  output_ext: ".obj"
+  overwrite: true
+  verbose: true

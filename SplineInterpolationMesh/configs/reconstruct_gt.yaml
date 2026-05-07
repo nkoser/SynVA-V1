@@ -1,0 +1,33 @@
+# SplineInterpolationMesh – Ground-truth mesh reconstruction
+# Uses dense cross-section interpolation + SDF + Marching Cubes
+
+paths:
+  # Input: ground-truth val split (parent-relative, node-local CPs)
+  input: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/val
+  output_dir: SplineInterpolationMesh/output/gt_sdf_mc
+
+params:
+  # ── Data handling ──────────────────────────────────────────────────
+  pattern: "*.npy"
+  max_files: null             # null = all files
+  overwrite: false
+  convert_to_absolute: true   # convert from parent-relative + node-local CPs
+  output_ext: ".obj"
+
+  # ── Interpolation ─────────────────────────────────────────────────
+  target_spacing: 0.005       # arc-length between interpolated cross-sections
+  n_ring_pts: 64              # points per cross-section ring
+
+  # ── SDF + Marching-Cubes parameters ───────────────────────────────
+  mc_resolution: 256          # voxels along the longest bbox axis
+  mc_padding: 0.02            # extra space around bounding box
+  mc_n_neighbors: 3           # K nearest cross-sections per grid point
+  mc_smooth_k: 0.01           # smooth-min blending radius (0 = hard min)
+  mc_level: 0.0               # isosurface level
+  mc_narrow_band_factor: 3.0  # narrow-band = factor × max_ring_radius
+  mc_chunk_size: 200000       # grid points per polygon-SDF batch
+  sdf_smooth_sigma: 1.5       # Gaussian smoothing of SDF grid (voxel units, 0 = off)
+
+  # ── Post-processing ───────────────────────────────────────────────
+  smooth_iterations: 20       # Taubin smoothing passes (0 = off)
+  decimate_ratio: 0           # quadric decimation ratio (0 = off, 0.5 = half)

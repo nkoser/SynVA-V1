@@ -1,0 +1,20 @@
+# Lofting + heavy Taubin smoothing (100 it) for smooth bifurcation edges
+paths:
+  input: /data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_200depth_v6
+  output_dir: SplineInterpolationMesh/output/gt_v6_loft_smooth
+
+params:
+  pattern: "*.npy"
+  max_files: 5
+  overwrite: true
+  skip_rotations: true
+  convert_to_absolute: false
+  output_ext: ".obj"
+
+  method: loft
+  target_spacing: 0.005
+  n_ring_pts: 64
+  loft_cap_ends: true
+
+  smooth_iterations: 100
+  decimate_ratio: 0

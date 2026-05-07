@@ -1,0 +1,80 @@
+# Flow Matching + Physio v7 — same losses as v6 but trained FROM SCRATCH
+# (no warm-start from v5). v6 warm-started from v5 only moved the metrics
+# slightly toward GT; suspicion is that the v5 init biased the optimizer
+# basin and the new continuity losses never reshaped the cross-section
+# geometry from the ground up. v7 lets the model learn pos/cp/knots and
+# the continuity terms jointly.
+#
+# Cross-section continuity losses on x_hat_1:
+#   circularity_weight     1.0   CPs lie on a circle (low std of radii)
+#   normal_tangent_weight  0.5   plane normal ⊥ centerline tangent
+#   normal_smooth_weight   0.3   parent/child plane normals aligned
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_healthy_vessel_relpos_nodecp_v1/train
+  val_dir:   derived_data/TreesSplines_k_count_100depth_prepared_norm_healthy_vessel_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching_Physio/output/physio_v7_healthy
+  feature_stats: Stage2_FlowMatching/feature_stats_healthy.npz
+  # NO init_from — train from scratch
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 384
+  n_heads: 8
+  n_layers: 10
+  d_ff: 1536
+  max_nodes: 256
+  dropout: 0.1
+  tree_attn_hops: 0
+  self_conditioning: true
+  depth_in_geometry: true
+
+params:
+  lr: 3.0e-4            # higher than v6 since from scratch
+  weight_decay: 0.01
+  batch_size: 128
+  batch_size_val: 128
+  epochs: 400           # from scratch needs more
+  patience: 80
+  warmup_steps: 1000    # from scratch needs proper warmup
+  seed: 42
+  device: 0
+  num_workers: 4
+  rollout_interval: 25
+  rollout_steps: 50
+  rollout_samples: 8
+  save_every: 50
+  ema_decay: 0.999
+  resume: false
+
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  time_sampling: uniform
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0
+  radius_weight: 3.0
+  eccentricity_weight: 0.0
+  # v6/v7 continuity losses
+  circularity_weight: 1.0
+  normal_tangent_weight: 0.5
+  normal_smooth_weight: 0.3
+
+physio:
+  murray_weight: 2.0
+  murray_gamma: 3.0
+  bifurcation_angle_weight: 1.0
+  target_angle_deg: 120.0
+  angle_margin_deg: 30.0
+  tapering_weight: 1.0
+  symmetry_weight: 1.0
+  symmetry_target: 0.67
+  symmetry_margin: 0.15
+  sibling_cosine_weight: 3.0
+  sibling_cosine_target: -0.5
+  depth_radius_weight: 3.0
+  depth_radius_target_decay: 0.95

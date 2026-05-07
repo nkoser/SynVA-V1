@@ -1,0 +1,9 @@
+paths:
+  train_dir: "/workspace/SynVA_V1/derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/train"
+  val_dir: "/workspace/SynVA_V1/derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/val"
+  output_dir: "/workspace/SynVA_V1/Stage2_BranchTopology/tokens/branch_topology_relpos_nodecp_v1"
+
+params:
+  train_limit: null
+  val_limit: null
+

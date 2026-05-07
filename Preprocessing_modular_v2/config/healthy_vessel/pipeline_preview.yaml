@@ -1,0 +1,54 @@
+# Preview pipeline: same v5 settings as healthy_vessel/pipeline_full.yaml
+# but on a small staging set under healthy_vessel_staging_preview.
+paths:
+  raw_root:    '/data/healthy_vessel_staging_v2_preview'
+  output_root: '/data/Output_healthy_vessel_preview'
+
+params:
+  raw_mesh_patterns:
+    - '*/01_mesh/*.obj'
+  raw_mesh_datasets: []
+  raw_mesh_dataset_separator: '_'
+
+  resample_method: minimal
+  resample_epsilon: 0.01
+  resample_geom_tol: 0.025
+  resample_rad_tol: 0.05
+  resample_w_rad: 1.0
+  resample_clean_tol: 0.00001
+  resample_minimal_prune_passes: 0
+  resample_junction_keep_k: 1
+  resample_junction_keep_window: 0.015
+  resample_max_points_per_branch: 50
+
+  vmtk_script: vmtknetworkextraction -advancementratio 1.05
+  extract_centerlines_timeout_s: 600
+  extract_centerlines_fallback_ratios: [1.02, 1.01, 1.005]
+
+  normalize_overwrite: false
+
+  spline_fit_mode: robust
+  spline_fit_resample_only_if_needed: true
+  spline_fit_min_points: 12
+  spline_fit_resample: 128
+  spline_fallback_recenter: true
+  spline_fill_missing_with_nearest_valid: true
+  spline_fit_canonical_start: false
+  spline_fit_s: null
+  spline_fit_s_scale: 0.01
+  spline_fit_max_retries: 4
+  spline_fit_retry_factor: 10.0
+
+flags:
+  copy_raw_data: true
+  normalize_meshes: true
+  extract_centerlines: true
+  resample_centerlines: true
+  centerlines_to_obj: true
+  vessels_to_obj: true
+  radius_arrays: true
+  splines: true
+  graphs: true
+  trees: true
+  graphs_splines: true
+  trees_splines: true

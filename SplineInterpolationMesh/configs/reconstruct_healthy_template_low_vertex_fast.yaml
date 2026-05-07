@@ -1,0 +1,41 @@
+# Low-vertex / fast variant of reconstruct_healthy_template_biffix.yaml.
+# Goal: ~10–20× fewer vertices, ~5× faster recon.  Mesh quality is sufficient
+# for paired and distributional eval metrics (pos_mae, centerline ACD/HD95,
+# MMD/COV) — visual smoothness at branch joints is reduced.
+#
+# Knob deltas vs. biffix template:
+#
+#   target_spacing       : 0.005  → 0.010   (2× sparser longitudinal sampling)
+#   n_ring_pts           : 64     → 32      (half the radial sampling)
+#   poisson_depth        : 8      → 7       (128³ instead of 256³ voxels)
+#   poisson_n_cap_radial : 8      → 6       (sparser branch caps)
+#   poisson_repoisson    : true   → false   (no second Poisson refinement)
+#   iso_remesh           : true   → false   (skip pymeshlab post)
+
+paths:
+  input: ""
+  output_dir: ""
+
+params:
+  pattern: "*.npy"
+  exclude_pattern: "*_gt.npy,*_local.npy,*_gt_local.npy"
+  max_files: 0
+  overwrite: true
+  skip_rotations: true
+  convert_to_absolute: false
+  output_ext: ".obj"
+
+  method: poisson_perseg
+  target_spacing: 0.010
+  n_ring_pts: 32
+
+  poisson_depth: 7
+  poisson_n_cap_radial: 6
+  poisson_repoisson: false
+  poisson_repoisson_depth: 8
+  poisson_repoisson_samples: 60000
+
+  iso_remesh: false
+  iso_remesh_factor: 2.0
+  iso_remesh_iter: 3
+  iso_taubin_iter: 30

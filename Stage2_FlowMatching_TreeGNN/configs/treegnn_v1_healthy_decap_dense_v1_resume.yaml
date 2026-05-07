@@ -1,0 +1,47 @@
+# Resume variant for the dense decapped healthy vessel biffilter dataset.
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v1_norm_relpos_nodecp_v1/train
+  val_dir: derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v1_norm_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching_TreeGNN/output/treegnn_v1_healthy_decap_dense_v1
+  feature_stats: Stage2_FlowMatching/feature_stats_healthy_decap_dense_v1.npz
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 512
+  d_model: 256
+  n_heads: 8
+  n_layers: 10
+  max_nodes: 2048
+  dropout: 0.1
+  self_conditioning: true
+  global_attn_every: 3
+
+params:
+  lr: 2.0e-4
+  weight_decay: 0.01
+  batch_size: 16
+  batch_size_val: 8
+  epochs: 400
+  patience: 60
+  warmup_steps: 500
+  seed: 42
+  device: 0
+  num_workers: 8
+  rollout_interval: 50
+  rollout_steps: 25
+  rollout_samples: 2
+  save_every: 50
+  ema_decay: 0.999
+  resume: true
+
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  time_sampling: uniform
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0
+  radius_weight: 3.0

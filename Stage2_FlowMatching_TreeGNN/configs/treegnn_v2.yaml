@@ -1,0 +1,54 @@
+# Tree-GNN Flow Matching v2
+#
+# Scale up to match Transformer v8 param count (~20M):
+#   d_model: 256 → 384, n_layers: 10 → 6
+#   → 20.79M params (vs v8 Transformer 19.62M)
+#
+# Same 6 GNN layers still give 6-hop receptive field.
+# Global attention at layers 2 and 5 (every 3), same density as v1.
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/train
+  val_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching_TreeGNN/output/treegnn_v2
+  feature_stats: Stage2_FlowMatching/feature_stats.npz
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 384
+  n_heads: 8
+  n_layers: 6
+  max_nodes: 256
+  dropout: 0.1
+  self_conditioning: true
+  global_attn_every: 3   # global attn at layers 2 and 5
+
+params:
+  lr: 2.0e-4
+  weight_decay: 0.01
+  batch_size: 32
+  batch_size_val: 32
+  epochs: 600
+  patience: 100
+  warmup_steps: 500
+  seed: 42
+  device: 0
+  num_workers: 4
+  rollout_interval: 25
+  rollout_steps: 50
+  rollout_samples: 8
+  save_every: 50
+  ema_decay: 0.999
+  resume: false
+
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  time_sampling: uniform
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0
+  radius_weight: 3.0

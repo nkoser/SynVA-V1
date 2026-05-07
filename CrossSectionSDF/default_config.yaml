@@ -1,0 +1,29 @@
+# CrossSectionSDF — Default configuration
+# Run: python -m CrossSectionSDF.reconstruct --config CrossSectionSDF/default_config.yaml
+
+paths:
+  input: /data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_100depth_prepared/val
+  output_dir: /data/roundtrip_test/meshes_xsdf
+
+params:
+  k: 39
+  pattern: "aneux_C0*.npy"
+  max_files: null
+
+  # Dense interpolation
+  target_spacing: 0.003   # arc-length between dense stations
+  n_angular: 128          # angular resolution of radius table R(θ)
+
+  # SDF evaluation
+  sdf_step: 0.004         # marching cubes grid resolution
+  smooth_k: 0.005         # smooth-min blending at bifurcations (0 = hard)
+  k_neighbors: 5          # nearest stations to check per query point
+  batch_slices: 40        # X-slices per evaluation batch
+
+  # Post-processing
+  smooth_iterations: 20   # Taubin smoothing iterations (0 = skip)
+  smooth_lambda: 0.5      # Taubin λ
+  min_component_ratio: 0.01
+
+  output_ext: ".obj"
+  overwrite: true

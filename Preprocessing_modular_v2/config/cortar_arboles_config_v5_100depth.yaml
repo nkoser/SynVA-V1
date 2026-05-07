@@ -1,0 +1,14 @@
+# Trim tree depth to 100 for v5 (from fixed splines TreesSplines).
+
+paths:
+  input_dir: '/data/Output_minimal_data_prepared_meshs3/TreesSplines_v5'
+  output_dir: '/data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_100depth_v5'
+
+params:
+  max_depth: 100
+  k: 39
+  input_mode: post_order
+  output_mode: pre_order_kcount
+  glob: "*.npy"
+  overwrite: true
+  log_every: 50

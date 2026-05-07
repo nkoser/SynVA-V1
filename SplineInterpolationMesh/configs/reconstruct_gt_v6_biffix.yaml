@@ -1,0 +1,28 @@
+# v6 (200depth) — best version per benchmark — first 10 only
+
+paths:
+  input: /data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_200depth_v6
+  output_dir: output/gt_v6_poisson_perseg_biffix
+
+params:
+  pattern: "*.npy"
+  max_files: 10
+  overwrite: true
+  skip_rotations: true
+  convert_to_absolute: false
+  output_ext: ".obj"
+
+  method: poisson_perseg
+  target_spacing: 0.005
+  n_ring_pts: 64
+
+  poisson_depth: 8
+  poisson_n_cap_radial: 8
+  poisson_repoisson: true
+  poisson_repoisson_depth: 9
+  poisson_repoisson_samples: 120000
+
+  iso_remesh: true
+  iso_remesh_factor: 2.0
+  iso_remesh_iter: 3
+  iso_taubin_iter: 30

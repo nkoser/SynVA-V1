@@ -1,0 +1,87 @@
+# TreeGNN Flow Matching v4 — v3 + wider logit-normal t-sampling.
+#
+# v3 → v4 delta:
+#   - time_logit_normal_std : 1.0 -> 1.4
+#
+# Motivation:
+#   v3 (time_logit_normal_std=1.0) achieved best local-geometry metrics in
+#   evaluation_results_healthy_all_v2_clean (Circ 0.041, Ecc 0.129, AngW1
+#   16.94°, TortW1 0.0949) but worse global distributional metrics
+#   (MMD 0.079 vs Physio v10 0.036, 1-NNA 0.789 vs Physio v11 0.746).
+#
+#   The std=1.0 logit-normal puts ~31% of t-mass in [0.4, 0.6] — great for
+#   local denoising but starves the t≈0 and t≈1 endpoints where global
+#   tree structure is determined.
+#
+#   std=1.4 broadens the distribution: ~22% in [0.4, 0.6] (vs uniform 20%),
+#   ~6% below 0.1 (vs std=1.0's 1.4%), ~6% above 0.9. Endpoints recover
+#   substantially while t=0.5 still gets a moderate peak (~1.15× uniform).
+#
+# Goal: keep v3's local-geometry win, recover MMD / 1-NNA toward Physio
+# v10/v11 levels.
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_100depth_prepared_biffilter_v1_norm_relpos_nodecp_v1/train
+  val_dir:   derived_data/TreesSplines_k_count_100depth_prepared_biffilter_v1_norm_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching_TreeGNN_v2/output/treegnn_v4_physio_v2_clean
+  feature_stats: Stage2_FlowMatching/feature_stats_healthy.npz
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 256
+  n_heads: 8
+  n_layers: 10
+  max_nodes: 256
+  dropout: 0.1
+  self_conditioning: true
+  global_attn_every: 3
+
+params:
+  lr: 3.0e-4
+  weight_decay: 0.01
+  batch_size: 64
+  batch_size_val: 64
+  epochs: 400
+  patience: 80
+  warmup_steps: 1000
+  seed: 42
+  device: 0
+  num_workers: 4
+  rollout_interval: 25
+  rollout_steps: 50
+  rollout_samples: 8
+  save_every: 50
+  ema_decay: 0.999
+  resume: false
+
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  time_sampling: logit_normal
+  time_logit_normal_mean: 0.0
+  time_logit_normal_std: 1.4              # << v4 change (was 1.0 in v3)
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0
+  radius_weight: 3.0
+  circularity_weight: 1.0
+  normal_tangent_weight: 0.5
+  normal_smooth_weight: 0.3
+
+physio:
+  murray_weight: 0.0
+  murray_gamma: 3.0
+  bifurcation_angle_weight: 1.0
+  target_angle_deg: 120.0
+  angle_margin_deg: 30.0
+  tapering_weight: 0.0
+  symmetry_weight: 1.0
+  symmetry_target: 0.78
+  symmetry_margin: 0.22
+  sibling_cosine_weight: 3.0
+  sibling_cosine_target: -0.5
+  depth_radius_weight: 0.5
+  depth_radius_target_decay: 1.05

@@ -1,0 +1,28 @@
+# SDF + Marching Cubes (numba) — v9 trees (12 CPs per ring)
+
+paths:
+  input: /data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_500depth_v9
+  output_dir: output/gt_v9_sdf_fast
+
+params:
+  pattern: "*.npy"
+  max_files: 0
+  overwrite: true
+  skip_rotations: true
+  convert_to_absolute: false
+  output_ext: ".obj"
+  n_cp: 12
+
+  method: sdf_fast
+  target_spacing: 0.005
+  n_ring_pts: 64
+
+  mc_resolution: 256
+  mc_padding: 0.02
+  mc_n_neighbors: 3
+  mc_smooth_k: 0.005
+  mc_level: 0.0
+  mc_narrow_band_factor: 3.0
+
+  sdf_smooth_sigma: 1.5
+  sdf_erosion: 0.003

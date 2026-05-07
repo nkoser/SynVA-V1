@@ -1,0 +1,11 @@
+paths:
+  train_dir: /workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_norm/train
+  val_dir:   /workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_norm/val
+  test_dir:  /workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_norm/test
+  output_root: /workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_aligned2_norm
+
+params:
+  # Aggressive variant: flag any pair tilted > 45° (cos < 0.707) instead
+  # of > 60° (cos < 0.5). Aligns roughly 3× more rings than the v1 pass.
+  tilt_cos_threshold: 0.707
+  tangent_blend: 0.5

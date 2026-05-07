@@ -1,0 +1,29 @@
+# Generate trees using trained TreeGNN v2 (d384/6L)
+
+paths:
+  checkpoint: Stage2_FlowMatching_TreeGNN/output/treegnn_v2/best_model.pt
+  val_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/val
+  feature_stats: Stage2_FlowMatching/feature_stats.npz
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 384
+  n_heads: 8
+  n_layers: 6
+  max_nodes: 256
+  self_conditioning: true
+  global_attn_every: 3
+
+params:
+  n_samples: 20
+  n_steps: 100
+  seed: 42
+  device: 0
+  use_ema: true
+  solver: euler
+  time_schedule: linear
+  velocity_scale: 1.0
+  rp_damp: 0.75
+  output_dir: Stage2_FlowMatching_TreeGNN/generated/treegnn_v2

@@ -1,0 +1,86 @@
+# Flow Matching + Physiological Constraints v4
+#
+# Key change: Sibling Cosine Similarity Loss
+#
+# The cosine loss directly penalizes child branches pointing in the same
+# direction (cos_sim ~+0.65 in generated vs -0.49 in GT).
+# Advantages over angle hinge loss:
+#   - Smooth gradient everywhere (no atan2/acos)
+#   - Loss ∈ [0, 4], naturally balanced
+#   - Gradient directly rotates vectors apart
+#
+# Fine-tune from v3 (which already has angle loss fix).
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/train
+  val_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching_Physio/output/physio_v4
+  feature_stats: Stage2_FlowMatching/feature_stats.npz
+  init_from: Stage2_FlowMatching_Physio/output/physio_v3/best_model.pt
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 384
+  n_heads: 8
+  n_layers: 10
+  d_ff: 1536
+  max_nodes: 256
+  dropout: 0.1
+  tree_attn_hops: 0
+  self_conditioning: true
+
+params:
+  lr: 3.0e-5
+  weight_decay: 0.01
+  batch_size: 32
+  batch_size_val: 32
+  epochs: 400
+  patience: 80
+  warmup_steps: 200
+  seed: 42
+  device: 0
+  num_workers: 4
+  rollout_interval: 25
+  rollout_steps: 50
+  rollout_samples: 8
+  save_every: 50
+  ema_decay: 0.999
+  resume: false
+
+# Base v8 losses
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  time_sampling: uniform
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0
+  radius_weight: 3.0
+  eccentricity_weight: 0.0
+
+# Physiological constraint losses
+physio:
+  murray_weight: 2.0
+  murray_gamma: 3.0
+
+  # Keep angle loss from v3 (radians-based)
+  bifurcation_angle_weight: 1.0
+  target_angle_deg: 120.0
+  angle_margin_deg: 30.0
+
+  tapering_weight: 1.0
+
+  symmetry_weight: 1.0
+  symmetry_target: 0.67
+  symmetry_margin: 0.15
+
+  # NEW: Sibling cosine similarity loss
+  # GT mean cos_sim = -0.49 (children diverge ~120°)
+  # Generated cos_sim = +0.65 (children nearly parallel ~50°)
+  # For cos_sim=+0.65 → loss = (0.65 - (-0.5))² = 1.32 (strong signal!)
+  # For cos_sim=-0.49 → loss = (−0.49 − (−0.5))² ≈ 0.0001 (near zero)
+  sibling_cosine_weight: 3.0
+  sibling_cosine_target: -0.5

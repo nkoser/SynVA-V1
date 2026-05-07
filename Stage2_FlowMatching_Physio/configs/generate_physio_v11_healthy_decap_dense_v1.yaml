@@ -1,0 +1,24 @@
+paths:
+  checkpoint: Stage2_FlowMatching_Physio/output/physio_v11_healthy_decap_dense_v1/best_model.pt
+  val_dir: derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v1_norm_relpos_nodecp_v1/test
+  feature_stats: Stage2_FlowMatching/feature_stats_healthy_decap_dense_v1.npz
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 512
+  d_model: 384
+  n_heads: 8
+  n_layers: 10
+  d_ff: 1536
+  max_nodes: 2048
+  dropout: 0.1
+  tree_attn_hops: 0
+  self_conditioning: true
+  depth_in_geometry: true
+params:
+  n_steps: 100
+  n_samples: 100
+  seed: 42
+  device: 0
+  output_dir: Stage2_FlowMatching_Physio/generated/physio_v11_healthy_decap_dense_v1
+  use_ema: true

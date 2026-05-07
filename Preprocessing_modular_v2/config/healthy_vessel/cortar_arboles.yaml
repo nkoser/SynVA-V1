@@ -1,0 +1,13 @@
+# Trim trees to depth 100 (matches v4 convention).
+paths:
+  input_dir:  '/data/Output_healthy_vessel/TreesSplines'
+  output_dir: '/data/Output_healthy_vessel/TreesSplines_k_count_100depth'
+
+params:
+  max_depth: 100
+  k: 39
+  input_mode: post_order
+  output_mode: pre_order_kcount
+  glob: "*.npy"
+  overwrite: true
+  log_every: 50

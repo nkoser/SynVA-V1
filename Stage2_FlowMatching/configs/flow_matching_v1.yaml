@@ -1,0 +1,47 @@
+# Flow Matching v1 — Baseline with full bidirectional Transformer
+#
+# Key design choices:
+#   - Operates directly on continuous [N, 39] local geometry (no tokenization)
+#   - Full bidirectional attention at every step (like FSQ encoder)
+#   - OT-CFM linear interpolation path
+#   - d_model=256, 8 layers, 8 heads → ~8M params
+#   - tree_attn_hops=0 (full attention first, test tree hops later)
+
+paths:
+  train_dir: /workspace/SynVA_V1/derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/train
+  val_dir: /workspace/SynVA_V1/derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/val
+  output_dir: /workspace/SynVA_V1/Stage2_FlowMatching/output/flow_v1
+
+params:
+  seed: 42
+  device: 0
+  epochs: 500
+  batch_size: 32
+  batch_size_val: 32
+  num_workers: 8
+  lr: 0.0002
+  weight_decay: 0.01
+  warmup_steps: 500
+  patience: 80
+  save_every: 50
+  rollout_interval: 25
+  rollout_steps: 50
+  rollout_samples: 8
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 256
+  n_heads: 8
+  n_layers: 8
+  d_ff: 1024
+  max_nodes: 256
+  dropout: 0.1
+  tree_attn_hops: 0
+  input_clamp_value: null
+
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0

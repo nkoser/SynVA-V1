@@ -1,0 +1,88 @@
+# Flow Matching + Physiological Constraints v2
+#
+# Fine-tuned from v1 best checkpoint with corrected parameters:
+#
+# Changes from v1:
+#   1. Bifurcation angle target: 70° → 120° (GT median=119°)
+#      - v1 used 70°±20° which PENALIZED correct GT angles
+#      - v2 uses 120°±30° matching GT P10=92°..P90=158°
+#   2. Bifurcation angle weight: 1.0 → 3.0 (was having no effect)
+#   3. Symmetry loss ENABLED: target=0.67, margin=0.15
+#      - Murray law biases toward symmetric bifurcations (0.786 vs GT 0.674)
+#      - Symmetry loss counteracts this excess symmetry
+#   4. Warm-start from v1 best checkpoint
+#   5. Lower lr for fine-tuning (1.5e-4 → 5e-5)
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/train
+  val_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching_Physio/output/physio_v2
+  feature_stats: Stage2_FlowMatching/feature_stats.npz
+  init_from: Stage2_FlowMatching_Physio/output/physio_v1/best_model.pt
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 384
+  n_heads: 8
+  n_layers: 10
+  d_ff: 1536
+  max_nodes: 256
+  dropout: 0.1
+  tree_attn_hops: 0
+  self_conditioning: true
+
+params:
+  lr: 5.0e-5
+  weight_decay: 0.01
+  batch_size: 32
+  batch_size_val: 32
+  epochs: 400
+  patience: 80
+  warmup_steps: 200
+  seed: 42
+  device: 0
+  num_workers: 4
+  rollout_interval: 25
+  rollout_steps: 50
+  rollout_samples: 8
+  save_every: 50
+  ema_decay: 0.999
+  resume: false
+
+# Base v8 losses (kept identical)
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  time_sampling: uniform
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0
+  radius_weight: 3.0
+  eccentricity_weight: 0.0
+
+# Physiological constraint losses (CORRECTED)
+physio:
+  # Murray's Law — kept same as v1 (already excellent: 0.264 vs GT 0.925)
+  murray_weight: 2.0
+  murray_gamma: 3.0
+
+  # Bifurcation angle — FIXED target
+  # GT: mean=122°, median=119°, P10=92°, P90=158°
+  # v1 used target=70° margin=20° → wrong, penalized correct GT angles
+  # v2: target=120° margin=30° → allows 90°..150° (matches GT P10–P75)
+  bifurcation_angle_weight: 3.0
+  target_angle_deg: 120.0
+  angle_margin_deg: 30.0
+
+  # Radius tapering — kept same as v1 (excellent: 0.293 ≈ GT's 0.282)
+  tapering_weight: 1.0
+
+  # Symmetry ratio — NEW in v2
+  # v1 produced 0.786 (GT=0.674), Murray law biases toward more symmetry
+  # target=0.67 ± 0.15 counteracts this
+  symmetry_weight: 1.0
+  symmetry_target: 0.67
+  symmetry_margin: 0.15

@@ -1,0 +1,73 @@
+# Flow Matching + Physio v11 (healthy) — v10 + logit-normal time sampling on
+# the unfiltered healthy_vessel dataset. From-scratch, mirrors physio_v11_v2_clean.
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_healthy_vessel_relpos_nodecp_v1/train
+  val_dir:   derived_data/TreesSplines_k_count_100depth_prepared_norm_healthy_vessel_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching_Physio/output/physio_v11_healthy
+  feature_stats: Stage2_FlowMatching/feature_stats_healthy.npz
+  init_from: null
+  init_strict: false
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 384
+  n_heads: 8
+  n_layers: 10
+  d_ff: 1536
+  max_nodes: 256
+  dropout: 0.1
+  tree_attn_hops: 0
+  self_conditioning: true
+  depth_in_geometry: true
+
+params:
+  lr: 3.0e-4
+  weight_decay: 0.01
+  batch_size: 256
+  batch_size_val: 256
+  epochs: 400
+  patience: 80
+  warmup_steps: 500
+  seed: 42
+  device: 0
+  num_workers: 8
+  rollout_interval: 25
+  rollout_steps: 50
+  rollout_samples: 8
+  save_every: 50
+  ema_decay: 0.999
+  resume: false
+
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  time_sampling: logit_normal
+  time_logit_normal_mean: 0.0
+  time_logit_normal_std: 1.0
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0
+  radius_weight: 3.0
+  eccentricity_weight: 0.0
+  circularity_weight: 1.0
+  normal_tangent_weight: 0.5
+  normal_smooth_weight: 0.3
+
+physio:
+  murray_weight: 0.0
+  murray_gamma: 3.0
+  bifurcation_angle_weight: 1.0
+  target_angle_deg: 120.0
+  angle_margin_deg: 30.0
+  tapering_weight: 0.0
+  symmetry_weight: 1.0
+  symmetry_target: 0.78
+  symmetry_margin: 0.22
+  sibling_cosine_weight: 3.0
+  sibling_cosine_target: -0.5
+  depth_radius_weight: 0.5
+  depth_radius_target_decay: 1.05

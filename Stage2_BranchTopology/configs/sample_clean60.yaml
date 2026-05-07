@@ -1,0 +1,14 @@
+paths:
+  metadata_path: "/workspace/SynVA_V1/Stage2_BranchTopology/tokens/branch_topology_healthy_decap_dense_v1_biffilter_v2_aligned2/branch_topology_metadata.json"
+  model_dir: "/workspace/SynVA_V1/Stage2_BranchTopology/output/VesselGPT_GPT2_BRANCH_TOPOLOGY_HEALTHY_DECAP_DENSE_V1_BIFFILTER_V2_ALIGNED2_RUN01/best-gpt2"
+  output_dir: "/workspace/SynVA_V1/Stage2_BranchTopology/eval_clean60/generated"
+
+params:
+  num_samples: 60
+  max_new_tokens: 47
+  temperature: 1.0
+  top_k: 0
+  top_p: 0.95
+  seed: 12
+  device: 0
+  visualize: false

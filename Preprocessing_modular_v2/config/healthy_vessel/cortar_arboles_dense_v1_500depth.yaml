@@ -1,0 +1,14 @@
+# Convert dense healthy_vessel spline trees to pre_order_kcount format.
+
+paths:
+  input_dir:  '/data/Output_healthy_vessel/TreesSplines_healthy_dense_v1'
+  output_dir: '/workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_dense_v1'
+
+params:
+  max_depth: 500
+  k: 39
+  input_mode: post_order
+  output_mode: pre_order_kcount
+  glob: "*.npy"
+  overwrite: false
+  log_every: 50

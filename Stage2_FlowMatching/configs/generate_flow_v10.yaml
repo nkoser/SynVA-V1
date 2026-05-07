@@ -1,0 +1,24 @@
+# Generate from v10 (Gram-matrix shape loss)
+paths:
+  checkpoint: Stage2_FlowMatching/output/flow_v10/best_model.pt
+  feature_stats: Stage2_FlowMatching/feature_stats.npz
+  val_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching/generated/flow_v10
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 384
+  n_heads: 8
+  n_layers: 10
+  d_ff: 1536
+  max_nodes: 256
+  dropout: 0.1
+  tree_attn_hops: 0
+  self_conditioning: true
+
+generate:
+  n_steps: 100
+  seed: 42
+  ema: true

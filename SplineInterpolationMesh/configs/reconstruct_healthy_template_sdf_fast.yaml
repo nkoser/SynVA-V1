@@ -1,0 +1,30 @@
+# SDF-Fast (Numba Marching Cubes) — generic template for healthy vessel test set.
+# Paths are overridden via --input / --output_dir CLI args.
+# Tuned to match gt_v7_sdf_fast quality (same params as reconstruct_gt_v6_sdf_fast.yaml).
+
+paths:
+  input: ""           # overridden via --input
+  output_dir: ""      # overridden via --output_dir
+
+params:
+  pattern: "*.npy"
+  exclude_pattern: "*_gt.npy,*_local.npy,*_gt_local.npy"
+  max_files: 0        # 0 = no limit
+  overwrite: false    # skip already-built OBJ files
+  skip_rotations: true
+  convert_to_absolute: false
+  output_ext: ".obj"
+
+  method: sdf_fast
+  target_spacing: 0.005
+  n_ring_pts: 64
+
+  mc_resolution: 256
+  mc_padding: 0.02
+  mc_n_neighbors: 3
+  mc_smooth_k: 0.005
+  mc_level: 0.0
+  mc_narrow_band_factor: 3.0
+
+  sdf_smooth_sigma: 1.5
+  sdf_erosion: 0.003

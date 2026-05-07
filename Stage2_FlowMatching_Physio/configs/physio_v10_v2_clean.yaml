@@ -1,0 +1,114 @@
+# Flow Matching + Physio v10 — GT-aligned physio targets, trained FROM SCRATCH.
+#
+# Background:
+#   In v9_v2_clean (Murray-ablation of v6_v2_clean) we observed a persistent
+#   train/val pos-loss gap after ~40 epochs (Train 0.97 vs Val 1.14).
+#   Analysis of biffilter_v1/train distribution
+#   (analyze_physio_targets_vs_gt.py) revealed that three of the active
+#   physio constraints contradict the dataset itself:
+#
+#     - tapering_weight = 1.0  penalizes ANY r_child > r_parent, but
+#       39.86% of GT edges already have r_child > r_parent (median 0.97).
+#     - depth_radius_weight = 3.0 with target_decay = 0.95 penalizes
+#       55.93% of GT edges (median r_child / r_parent ≈ 0.97).
+#     - symmetry_target = 0.67 ± 0.15 covers only 37% of GT bifurcations
+#       (GT median ≈ 0.77, 5–95% in [0.26, 0.98]).
+#
+# v6/v9 → v10 delta:
+#   Loss targets:
+#     - tapering_weight             : 1.0 -> 0.0   (drop, contradicts data)
+#     - depth_radius_weight         : 3.0 -> 0.5   (soften)
+#     - depth_radius_target_decay   : 0.95 -> 1.05 (catch only explosions)
+#     - symmetry_target             : 0.67 -> 0.78 (GT median 0.77)
+#     - symmetry_margin             : 0.15 -> 0.22 (covers 5–95% quantile)
+#     - murray_weight               : 2.0 -> 0.0   (over-corrects vs GT 0.83)
+#   Schedule (from-scratch, mirrors physio_v5_healthy):
+#     - init_from                   : v6_v2_clean.best -> null (FROM SCRATCH)
+#     - lr                          : 1e-4 -> 3e-4
+#     - epochs                      : 200 -> 400
+#     - patience                    : 60 -> 80
+#     - warmup_steps                : 200 -> 1000
+#
+# Targets retained (validated by GT analysis):
+#   - bifurcation_angle: target 120°±30° → GT mean 119.2° (78% inside)
+#   - sibling_cosine:    target -0.5     → GT mean -0.45
+#   - circularity / normal_tangent / normal_smooth (geometric priors)
+#   - knot_mono / planarity / radius (v8 regularizers)
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_100depth_prepared_biffilter_v1_norm_relpos_nodecp_v1/train
+  val_dir:   derived_data/TreesSplines_k_count_100depth_prepared_biffilter_v1_norm_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching_Physio/output/physio_v10_v2_clean
+  feature_stats: Stage2_FlowMatching/feature_stats_healthy.npz
+  init_from: null
+  init_strict: false
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 384
+  n_heads: 8
+  n_layers: 10
+  d_ff: 1536
+  max_nodes: 256
+  dropout: 0.1
+  tree_attn_hops: 0
+  self_conditioning: true
+  depth_in_geometry: true
+
+params:
+  lr: 3.0e-4              # from-scratch (mirrors physio_v5_healthy)
+  weight_decay: 0.01
+  batch_size: 128
+  batch_size_val: 128
+  epochs: 400             # from-scratch needs more epochs
+  patience: 80            # widen tolerance — early curve is noisy
+  warmup_steps: 1000      # longer warmup for from-scratch
+  seed: 42
+  device: 0
+  num_workers: 4
+  rollout_interval: 25
+  rollout_steps: 50
+  rollout_samples: 8
+  save_every: 50
+  ema_decay: 0.999
+  resume: false
+
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  time_sampling: uniform
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0
+  radius_weight: 3.0
+  eccentricity_weight: 0.0
+  # v6 cross-section continuity losses (kept on, well-aligned)
+  circularity_weight: 1.0
+  normal_tangent_weight: 0.5
+  normal_smooth_weight: 0.3
+
+physio:
+  # Murray ablation kept from v9
+  murray_weight: 0.0
+  murray_gamma: 3.0
+
+  # Aligned with GT (mean 119.2°, 78% inside soft window)
+  bifurcation_angle_weight: 1.0
+  target_angle_deg: 120.0
+  angle_margin_deg: 30.0
+
+  # >>> v10 corrections <<<
+  tapering_weight: 0.0                # was 1.0 — contradicts 40% of GT edges
+
+  symmetry_weight: 1.0
+  symmetry_target: 0.78               # was 0.67 — GT median is 0.77
+  symmetry_margin: 0.22               # was 0.15 — covers 5–95% of GT
+
+  sibling_cosine_weight: 3.0          # GT mean -0.45 — well aligned
+  sibling_cosine_target: -0.5
+
+  depth_radius_weight: 0.5            # was 3.0 — formerly highest weight, but
+  depth_radius_target_decay: 1.05     # was 0.95 — only catch obvious explosions

@@ -1,0 +1,46 @@
+# Per-model mesh metrics on the clean-60 test subset.
+# - GT: union of /data/healthy_vessel_decapped and
+#       /data/healthy_vessel_decapped_staging_test_extra.
+# - Filtered to the clean-60 UIDs via include_regex.
+# - generated_mesh_roots is filled per-run by the wrapper sbatch.
+
+experiment:
+  name: mesh_metrics_clean60_per_model
+  output_dir: HealthyVesselMeshMetrics/output/mesh_metrics_clean60_per_model
+
+data:
+  gt_mesh_roots:
+    - /data/healthy_vessel_decapped
+    - /data/healthy_vessel_decapped_staging_test_extra
+
+  generated_mesh_roots: {}
+
+  file_extensions: [".obj", ".ply", ".stl", ".off"]
+  # Whitelist regex matching only the 60 clean UIDs (case_id position).
+  include_regex: '(?:^|[ /])(aneux_ANSYS_UNIGE_33_628|aneux_C0003|aneux_C0074b|aneux_C0086|aneux_SNF00000070|aneux_UPF_P0016\.00_ID1|aneux_UPF_P0019\.00_ID1|aneux_UPF_P0024\.00_ID1|aneux_UPF_P0031\.00_ID1|aneux_UPF_P0076\.00_ID1|aneux_UPF_P0082\.00_ID1|aneux_UPF_P0156\.00_ID1|aneux_UPF_P0161\.00_ID1|aneux_UPF_P0164\.00_ID1|aneux_UPF_P0165\.00_ID1|aneux_UPF_P0195\.00_ID1|aneux_UPF_P0204\.01_ID3|aneux_UPF_P0207\.01_ID1|aneux_UPF_P0208\.00_ID1|aneux_UPF_P0229\.00_ID1|aneux_UPF_P0277\.00_ID1|aneux_UPF_P0311\.00_ID1|aneux_USFD_0002|aneux_USFD_0011|aneux_USFD_0027|aneux_USFD_0036|aneux_p497_AwIaCBUbAR8QDQ8KARIdBh0R|aneux_p500_FAAtEhkEBAANBDkcGw0YBBEZ|aneux_p503_Ag4LHx8RAA4KFwkWAA4XFxoB_LICA|aneux_p514_EwAfEREGEx8SCBYOHAANBBgI_RICA|aneux_p529_HRQcEhgWBw8ADQsaHBIGCAAW_LICA|aneux_p530_AAgcCR83HgQaEQMRGw8GCioU_LICA|aneux_p538_EgAAAxUSExUNBBQNFxsPERcZ_LICA|cmha_AHMU1218005|cmha_AHMU1218020|cmha_AHMU1218024|cmha_AHMU1218027|cmha_AHMU1218029|cmha_AHMU1218044|cmha_AHMU1218045|cmha_AHMU1218060|cmha_AHMU1218064|cmha_AHMU1218075|cmha_AHMU1218086|cmha_AHMU1218093|cmha_AHMU1218097|intra_AN149|intra_AN160|intra_AN163\-2|intra_AN175|intra_AN182\-1|intra_AN182\-2|intra_AN196\-1|intra_AN196\-2|intra_AN201|intra_AN202|intra_AN208|intra_AN214|intra_AN34|intra_AN55)(?:[. /]|\Z)'
+  exclude_regex_gt:
+  exclude_regex_generated: "(_gt|_gt_local|_local)$"
+  max_cases:
+
+surface:
+  points_per_mesh: 20000
+  seed: 123
+  fscore_thresholds: [0.005, 0.01, 0.02]
+
+render:
+  enabled: true
+  points_per_mesh: 60000
+  resolution: 256
+  views: [xy, xz, yz]
+  bbox_mode: union
+  padding_fraction: 0.06
+  depth_mode: front
+  save_debug_images: 0
+  debug_dir: debug_renders
+
+image_metrics:
+  ssim: true
+  psnr: true
+  brisk: true
+  brisk_image: occupancy
+  brisk_lowe_ratio: 0.75

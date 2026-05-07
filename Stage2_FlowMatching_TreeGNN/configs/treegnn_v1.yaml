@@ -1,0 +1,60 @@
+# Tree-GNN Flow Matching v1
+#
+# Same data/loss config as Transformer v8 (best single-stage),
+# but replaces the Transformer with TreeFlowNet (GNN backbone).
+#
+# Architecture:
+#   - 10 TreeMessagePassingLayers (parent→child, child→parent, sibling)
+#   - Global self-attention every 3 layers (for long-range symmetry)
+#   - d_model=256, ~10.5M params (vs v8 Transformer ~19.6M)
+#
+# Hypothesis: Tree-inductive bias should help with:
+#   - Better branch-direction alignment (parent→child messages)
+#   - More consistent bifurcation angles (sibling messages)
+#   - Better radius tapering (bottom-up aggregation)
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/train
+  val_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching_TreeGNN/output/treegnn_v1
+  feature_stats: Stage2_FlowMatching/feature_stats.npz
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 256
+  n_heads: 8        # only for global attention layers
+  n_layers: 10      # 10 GNN layers → 10-hop receptive field
+  max_nodes: 256
+  dropout: 0.1
+  self_conditioning: true
+  global_attn_every: 3   # global attn at layers 2, 5, 8 (0-indexed)
+
+params:
+  lr: 2.0e-4
+  weight_decay: 0.01
+  batch_size: 32
+  batch_size_val: 32
+  epochs: 600
+  patience: 100
+  warmup_steps: 500
+  seed: 42
+  device: 0
+  num_workers: 4
+  rollout_interval: 25
+  rollout_steps: 50
+  rollout_samples: 8
+  save_every: 50
+  ema_decay: 0.999
+  resume: false
+
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  time_sampling: uniform
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0
+  radius_weight: 3.0

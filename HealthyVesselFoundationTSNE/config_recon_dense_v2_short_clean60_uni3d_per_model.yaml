@@ -1,0 +1,93 @@
+# Per-model UNI3D t-SNE on the clean-60 test subset.
+# - GT: union of /data/healthy_vessel_decapped and
+#       /data/healthy_vessel_decapped_staging_test_extra.
+#       Filtered to the clean-60 UIDs via clean_60_split.csv.
+# - Generated: each subfolder of output/recon_healthy_decap_dense_v2_short/
+#       (one t-SNE plot per model, looped by the sbatch wrapper).
+
+experiment:
+  name: recon_dense_v2_short_clean60_uni3d_per_model
+  output_dir: HealthyVesselFoundationTSNE/output/recon_dense_v2_short_clean60_uni3d_per_model
+
+data:
+  gt_mesh_roots:
+    - /data/healthy_vessel_decapped
+    - /data/healthy_vessel_decapped_staging_test_extra
+
+  generated_mesh_roots: {}
+
+  file_extensions: [".obj", ".ply", ".stl", ".off"]
+  include_regex:
+  exclude_regex_gt:
+  exclude_regex_generated: "(_gt|_gt_local|_local)$"
+
+  # Use the clean-60 whitelist CSV (uid;split) — UIDs marked as "test"
+  # so split_keep=[test] keeps exactly those.
+  split_csv: HealthyVesselFoundationTSNE/clean_60_split.csv
+  split_csv_delimiter: ";"
+  split_csv_uid_col: uid
+  split_csv_split_col: split
+  split_keep: [test]
+
+  # Distribution comparison: all 60 GT vs all generated meshes that the
+  # current model has reconstructed so far. Models with partial recon are
+  # still useful — they just contribute fewer points to the plot.
+  paired_only: false
+  max_cases:
+
+pointcloud:
+  points_per_mesh: 10000
+  sample_method: surface
+  normalize: unit_sphere
+  seed: 42
+  cache_dir: pointclouds
+  overwrite_cache: false
+
+embedding:
+  backend: uni3d
+  batch_size: 8
+  device: cuda
+  cache_file: embeddings.npz
+  overwrite_cache: false
+  l2_normalize: true
+
+  uni3d:
+    repo_path: /data/foundation_models/Uni3D
+    callable: HealthyVesselFoundationTSNE.backbones.uni3d_adapter:embed_point_clouds
+    checkpoint: /data/foundation_models/Uni3D_weights/modelzoo/uni3d-g/model.pt
+    model_name: create_uni3d
+    scale: giant
+    num_points: 10000
+    rgb: [0.4, 0.4, 0.4]
+    use_pointnet2_fallback: true
+    force_pointnet2_fallback: true
+    patch_dropout: 0.0
+    args: {}
+
+tsne:
+  perplexity: 30
+  init: pca
+  learning_rate: auto
+  metric: euclidean
+  random_state: 42
+  max_iter: 1500
+  standardize: false
+
+plot:
+  filename: uni3d_tsne_clean60.png
+  title: "UNI3D t-SNE: clean-60 GT vs generated model"
+  dpi: 240
+  point_size: 30
+  draw_pair_lines: false
+  show_axis_labels: false
+  show_grid: true
+  show_legend: true
+  legend_loc: best
+  legend_columns: 1
+  legend_fontsize: 9
+  marker_by_kind:
+    gt: o
+    generated: o
+  color_by_kind:
+    gt: "#2f6fbb"
+    generated: "#f28e2b"

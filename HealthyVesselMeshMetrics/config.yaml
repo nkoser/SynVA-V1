@@ -1,0 +1,48 @@
+# Healthy vessel mesh metrics.
+#
+# SSIM/PSNR/BRISK are computed on deterministic multi-view rendered images.
+# Chamfer/Hausdorff/F-score are computed on sampled mesh surfaces.
+
+experiment:
+  name: healthy_vessel_mesh_metrics
+  output_dir: HealthyVesselMeshMetrics/output/healthy_vessel_mesh_metrics
+
+data:
+  gt_mesh_roots:
+    - /data/healthy_vessel_decapped
+    - /data/healthy_vessel
+
+  # Fill as generated mesh folders become available.
+  # generated_mesh_roots:
+  #   physio_v5: /data/Stage2_FlowMatching_Physio/generated/physio_v5/meshes_sweep
+  #   treegnn_v2_abspos: /workspace/SynVA_V1/SplineInterpolationMesh/output/healthy_treegnn_v2
+  generated_mesh_roots: {}
+
+  file_extensions: [".obj", ".ply", ".stl", ".off"]
+  include_regex:
+  exclude_regex_gt:
+  exclude_regex_generated: "(_gt|_gt_local|_local)$"
+  max_cases:
+
+surface:
+  points_per_mesh: 20000
+  seed: 123
+  fscore_thresholds: [0.005, 0.01, 0.02]
+
+render:
+  enabled: true
+  points_per_mesh: 60000
+  resolution: 256
+  views: [xy, xz, yz]
+  bbox_mode: union
+  padding_fraction: 0.06
+  depth_mode: front
+  save_debug_images: 0
+  debug_dir: debug_renders
+
+image_metrics:
+  ssim: true
+  psnr: true
+  brisk: true
+  brisk_image: occupancy
+  brisk_lowe_ratio: 0.75

@@ -1,0 +1,13 @@
+paths:
+  input_root:  '/workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_allcases_dense_v1_prepared_norm'
+  output_root: '/workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_allcases_dense_v1_prepared_norm_relpos_nodecp_v1'
+
+params:
+  splits: ['train', 'val', 'test']
+  mode: parent_relative
+  include_node_position: true
+  include_node_radius: true
+  include_node_tangent: false
+  include_node_cp: false
+  include_edge_cp: false
+  overwrite: false

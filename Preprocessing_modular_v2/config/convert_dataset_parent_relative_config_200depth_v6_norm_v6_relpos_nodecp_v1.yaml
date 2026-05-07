@@ -1,0 +1,14 @@
+paths:
+  train_dir: /data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_200depth_v6_prepared_norm_v6/train
+  val_dir: /data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_200depth_v6_prepared_norm_v6/val
+  test_dir: /data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_200depth_v6_prepared_norm_v6/test
+  output_root: /workspace/SynVA_V1/derived_data/TreesSplines_k_count_200depth_v6_prepared_norm_v6_relpos_nodecp_v1
+  metadata_path: /workspace/SynVA_V1/derived_data/TreesSplines_k_count_200depth_v6_prepared_norm_v6_relpos_nodecp_v1/local_geometry_metadata.json
+
+params:
+  pattern: "*.npy"
+  overwrite: false
+  position_slice: [1, 4]
+  control_point_slices: [[4, 12], [12, 20], [20, 28]]
+  relative_positions: true
+  node_local_control_points: true

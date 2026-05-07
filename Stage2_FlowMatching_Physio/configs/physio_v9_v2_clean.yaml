@@ -1,0 +1,96 @@
+# Flow Matching + Physio v9 — direct Murray-ablation of v6_v2_clean.
+#
+# v6_v2_clean → v9_v2_clean delta:
+#   - murray_weight: 2.0 -> 0.0   (Murray's Law constraint removed)
+#   - everything else identical (same architecture, same warm-start,
+#     same dataset, same hyperparameters, same other physio terms)
+#
+# Motivation:
+#   In evaluation_results_healthy_all, Physio v5/v6 hit Murray ≈ 0.23–0.25
+#   while GT-Murray on the healthy_vessel test split is ≈ 0.83. The Murray
+#   term therefore over-corrects relative to the dataset distribution. v9
+#   ablates the Murray term to test whether dropping it improves
+#   distributional realism (MMD, 1-NNA, COV) without sacrificing the
+#   bifurcation geometry that comes from the other physio terms
+#   (sibling_cosine, bifurcation_angle, depth_radius, tapering, symmetry).
+#
+# Warm-start strategy:
+#   Same init_from as physio_v6_v2_clean.yaml → physio_v5_healthy/best_model.pt.
+#   This makes the comparison "what changes if Murray is off from this point on"
+#   from identical starting weights.
+#
+# Dataset:
+#   biffilter_v1 (TreesSplines_k_count_100depth_prepared_biffilter_v1_norm_relpos_nodecp_v1).
+#   Same training/val split as the rest of the *_v2_clean configs.
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_100depth_prepared_biffilter_v1_norm_relpos_nodecp_v1/train
+  val_dir:   derived_data/TreesSplines_k_count_100depth_prepared_biffilter_v1_norm_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching_Physio/output/physio_v9_v2_clean
+  feature_stats: Stage2_FlowMatching/feature_stats_healthy.npz
+  init_from: Stage2_FlowMatching_Physio/output/physio_v5_healthy/best_model.pt
+  init_strict: true
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 384
+  n_heads: 8
+  n_layers: 10
+  d_ff: 1536
+  max_nodes: 256
+  dropout: 0.1
+  tree_attn_hops: 0
+  self_conditioning: true
+  depth_in_geometry: true
+
+params:
+  lr: 1.0e-4
+  weight_decay: 0.01
+  batch_size: 128
+  batch_size_val: 128
+  epochs: 200
+  patience: 60
+  warmup_steps: 200
+  seed: 42
+  device: 0
+  num_workers: 4
+  rollout_interval: 25
+  rollout_steps: 50
+  rollout_samples: 8
+  save_every: 50
+  ema_decay: 0.999
+  resume: false
+
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  time_sampling: uniform
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0
+  radius_weight: 3.0
+  eccentricity_weight: 0.0
+  # v6 cross-section continuity losses (kept on)
+  circularity_weight: 1.0
+  normal_tangent_weight: 0.5
+  normal_smooth_weight: 0.3
+
+physio:
+  # >>> Ablation: Murray's Law disabled <<<
+  murray_weight: 0.0
+  murray_gamma: 3.0
+
+  bifurcation_angle_weight: 1.0
+  target_angle_deg: 120.0
+  angle_margin_deg: 30.0
+  tapering_weight: 1.0
+  symmetry_weight: 1.0
+  symmetry_target: 0.67
+  symmetry_margin: 0.15
+  sibling_cosine_weight: 3.0
+  sibling_cosine_target: -0.5
+  depth_radius_weight: 3.0
+  depth_radius_target_decay: 0.95

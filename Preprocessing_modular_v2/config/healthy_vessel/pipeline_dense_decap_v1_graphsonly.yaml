@@ -1,0 +1,58 @@
+paths:
+  raw_root:    '/data/healthy_vessel_decapped_staging_v1'
+  output_root: '/data/Output_healthy_vessel_decap_dense_v1'
+
+params:
+  raw_mesh_patterns:
+    - '*/01_mesh/*.obj'
+  raw_mesh_datasets: []
+  raw_mesh_dataset_separator: '_'
+
+  resample_method: step
+  resample_step: 0.02
+  resample_use_radius: true
+  resample_base_step: 0.02
+  resample_step_min: 0.006
+  resample_step_max: 0.02
+  resample_radius_scale: 0.3
+  resample_radius_mode: drds
+  resample_drds_threshold: 0.05
+  resample_drds_boost: 4.0
+  resample_curv_threshold: 3.0
+  resample_curv_boost: 1.0
+  resample_junction_window: 0.02
+  resample_junction_factor: 0.5
+  resample_junction_degree: 3
+  resample_max_points_per_branch: null
+
+  vmtk_script: vmtknetworkextraction -advancementratio 1.05
+  extract_centerlines_timeout_s: 30
+  extract_centerlines_fallback_ratios: [1.02, 1.01]
+
+  normalize_overwrite: false
+
+  spline_fit_mode: robust
+  spline_fit_resample_only_if_needed: true
+  spline_fit_min_points: 12
+  spline_fit_resample: 256
+  spline_fallback_recenter: true
+  spline_fill_missing_with_nearest_valid: true
+  spline_fit_canonical_start: false
+  spline_fit_s: null
+  spline_fit_s_scale: 0.01
+  spline_fit_max_retries: 4
+  spline_fit_retry_factor: 10.0
+
+flags:
+  copy_raw_data: false
+  normalize_meshes: false
+  extract_centerlines: false
+  resample_centerlines: false
+  centerlines_to_obj: false
+  vessels_to_obj: false
+  radius_arrays: false
+  splines: false
+  graphs: true
+  trees: true
+  graphs_splines: true
+  trees_splines: true

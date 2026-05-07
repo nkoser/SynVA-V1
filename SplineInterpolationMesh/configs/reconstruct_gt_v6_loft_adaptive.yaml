@@ -1,0 +1,33 @@
+# Lofting with adaptive bifurcation smoothing
+# Complex bifs (aneurysms) get aggressive smoothing, simple bifs get light smoothing
+
+paths:
+  input: /data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_200depth_v6
+  output_dir: output/gt_v6_loft_adaptive
+
+params:
+  pattern: "*.npy"
+  max_files: 5
+  overwrite: true
+  skip_rotations: true
+  convert_to_absolute: false
+  output_ext: ".obj"
+
+  method: loft
+  target_spacing: 0.005
+  n_ring_pts: 64
+  loft_cap_ends: true
+
+  # Simple bifurcation smoothing
+  bif_smooth_iterations: 30
+  bif_smooth_radius_factor: 2.5
+  bif_smooth_lambda: 0.5
+
+  # Complex bifurcation detection & smoothing (aneurysms)
+  complex_threshold: 1.3
+  complex_iterations: 60
+  complex_radius_factor: 4.0
+
+  # Light global Taubin
+  smooth_iterations: 3
+  decimate_ratio: 0

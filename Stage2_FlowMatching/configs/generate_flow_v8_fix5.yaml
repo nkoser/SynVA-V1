@@ -1,0 +1,27 @@
+# Generation config for v8 model with corrected Fix 4 (aspect ratio correction)
+# Fix 4 was previously blending toward circle (alpha=0.65 toward S[0])
+# Now blends toward GT median aspect ratio 0.786 with alpha=0.3
+paths:
+  checkpoint: Stage2_FlowMatching/output/flow_v8/best_model.pt
+  val_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/val
+  feature_stats: Stage2_FlowMatching/feature_stats.npz
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 384
+  n_heads: 8
+  n_layers: 10
+  d_ff: 1536
+  max_nodes: 256
+  tree_attn_hops: 0
+  self_conditioning: true
+
+params:
+  n_steps: 100
+  n_samples: 20
+  seed: 42
+  device: 0
+  output_dir: Stage2_FlowMatching/generated/flow_v8_fix5
+  use_ema: true

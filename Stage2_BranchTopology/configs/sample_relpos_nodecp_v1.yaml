@@ -1,0 +1,17 @@
+paths:
+  metadata_path: "/workspace/SynVA_V1/Stage2_BranchTopology/tokens/branch_topology_relpos_nodecp_v1/branch_topology_metadata.json"
+  model_dir: "/workspace/SynVA_V1/Stage2_BranchTopology/output/VesselGPT_GPT2_BRANCH_TOPOLOGY_RELPOS_NODECP_V1_RUN01/best-gpt2"
+  output_dir: "/workspace/SynVA_V1/Stage2_BranchTopology/generated/branch_topology_relpos_nodecp_v1_run01"
+
+params:
+  num_samples: 8
+  max_new_tokens: 256
+  temperature: 1.0
+  top_k: 0
+  top_p: 0.95
+  seed: 12
+  device: 0
+  visualize: true
+  visualize_dir: "/workspace/SynVA_V1/Stage2_BranchTopology/generated/branch_topology_relpos_nodecp_v1_run01/plots"
+  show_intermediate_dense_nodes: true
+  annotate_lengths: true

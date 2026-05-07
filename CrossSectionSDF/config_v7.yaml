@@ -1,0 +1,39 @@
+# CrossSectionSDF — v7 TreeSplines (500 depth)
+
+paths:
+  input: /data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_500depth_v7
+  output_dir: /data/roundtrip_test/meshes_xsdf_v7_capped
+
+params:
+  k: 39
+  pattern: "aneux_C0*.npy"
+  max_files: null
+  # Filter to same 11 roundtrip cases
+  filter_cases:
+    - aneux_C0002
+    - aneux_C0020
+    - aneux_C0028a
+    - aneux_C0032
+    - aneux_C0033
+    - aneux_C0042
+    - aneux_C0054
+    - aneux_C0058
+    - aneux_C0062
+    - aneux_C0084
+    - aneux_C0089
+
+  target_spacing: 0.003
+  n_angular: 128
+  radius_cap_factor: 1.7
+
+  sdf_step: 0.004
+  smooth_k: 0.005
+  k_neighbors: 5
+  batch_slices: 40
+
+  smooth_iterations: 20
+  smooth_lambda: 0.5
+  min_component_ratio: 0.01
+
+  output_ext: ".obj"
+  overwrite: true

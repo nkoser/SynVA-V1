@@ -1,0 +1,14 @@
+﻿# Cortar arboles (trim tree depth) config
+
+paths:
+  input_dir: '/data/Output_minimal_data/TreesSplines' 
+  output_dir: '/data/Output_minimal_data/TreesSplines_k_count_70depth'
+
+params:
+  max_depth: 70
+  k: 39
+  input_mode: post_order
+  output_mode: pre_order_kcount
+  glob: "*.npy"
+  overwrite: false
+  log_every: 1

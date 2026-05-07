@@ -1,0 +1,38 @@
+# Feature normalization for v5 (fixed-splines dataset, 100depth, prepared).
+# Mirrors norm_v4 method (geometry_clip) — knot channels left unchanged.
+
+paths:
+  train_dir: /data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_100depth_v5_prepared/train
+  val_dir:   /data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_100depth_v5_prepared/val
+  test_dir:  /data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_100depth_v5_prepared/test
+
+  output_root: /data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_100depth_v5_prepared_norm_v5
+  stats_path:  /data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_100depth_v5_prepared_norm_v5/normalization_stats.json
+
+params:
+  pattern: '*.npy'
+
+  # robust_clip | maxabs_clip | zscore_clip | geometry_clip
+  method: geometry_clip
+  quantile: 99.9
+  clip_value: 3.0
+
+  # Leave k-token unchanged, normalize only continuous channels.
+  feature_start: 1
+  feature_end: null
+
+  # Preserve geometric relations for xyz + spline control points.
+  geometry_isotropic: true
+
+  # Keep knot channels unchanged and unclipped (same as v4).
+  geometry_normalize_knots: false
+  geometry_knots_quantile: 99.9
+
+  preserve_root_zero_xyz: true
+  root_position: first
+  root_xyz_indices: [1, 2, 3]
+  root_eps: 1e-8
+
+  eps: 1e-6
+  in_place: false
+  overwrite: false

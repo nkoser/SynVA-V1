@@ -1,0 +1,30 @@
+# Per-Segment Poisson + Bifurcation Fix — treegnn_v1_healthy
+# Params identical to reconstruct_gt_v7_biffix.yaml; input = generated abs trees.
+
+paths:
+  input: Stage2_FlowMatching_TreeGNN/generated/treegnn_v1_healthy/npy
+  output_dir: output/recon_healthy_v3/treegnn_v1_healthy
+
+params:
+  pattern: "*.npy"
+  exclude_pattern: "*_gt.npy,*_local.npy,*_gt_local.npy"
+  max_files: 0
+  overwrite: true
+  skip_rotations: true
+  convert_to_absolute: false
+  output_ext: ".obj"
+
+  method: poisson_perseg
+  target_spacing: 0.005
+  n_ring_pts: 64
+
+  poisson_depth: 8
+  poisson_n_cap_radial: 8
+  poisson_repoisson: true
+  poisson_repoisson_depth: 9
+  poisson_repoisson_samples: 120000
+
+  iso_remesh: true
+  iso_remesh_factor: 2.0
+  iso_remesh_iter: 3
+  iso_taubin_iter: 30

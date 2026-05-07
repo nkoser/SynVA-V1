@@ -1,0 +1,60 @@
+# Flow Matching v9 — rel pos + radius loss + eccentricity loss
+# Builds on v8 (best overall) with an explicit eccentricity loss
+# to fix the aspect ratio mismatch: Gen 0.876 vs GT 0.786 (+11% too round)
+#
+# Key finding motivating this config:
+#   - v8: good radius (median 0.992×) and normals (0.753)
+#   - BUT cross-sections are 11% too circular (aspect ratio 0.876 vs 0.786)
+#   - GT eccentricity 0.587, Gen only 0.460
+#   - 36% of GT nodes have aspect < 0.8, but only 7% in Gen
+#   → Eccentricity loss on SVD S2/S1 ratio of x̂₁ vs x₀
+#
+# v9 = v8 + eccentricity_weight=5.0
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/train
+  val_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching/output/flow_v9
+  feature_stats: Stage2_FlowMatching/feature_stats.npz
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 384
+  n_heads: 8
+  n_layers: 10
+  d_ff: 1536
+  max_nodes: 256
+  dropout: 0.1
+  tree_attn_hops: 0
+  self_conditioning: true
+
+params:
+  lr: 1.5e-4
+  weight_decay: 0.01
+  batch_size: 32
+  batch_size_val: 32
+  epochs: 600
+  patience: 100
+  warmup_steps: 500
+  seed: 42
+  device: 0
+  num_workers: 4
+  rollout_interval: 25
+  rollout_steps: 50
+  rollout_samples: 8
+  save_every: 50
+  ema_decay: 0.999
+  resume: false
+
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  time_sampling: uniform
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0
+  radius_weight: 3.0
+  eccentricity_weight: 5.0

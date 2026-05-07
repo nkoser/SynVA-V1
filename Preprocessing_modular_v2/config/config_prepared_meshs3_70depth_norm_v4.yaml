@@ -1,0 +1,75 @@
+# Full preprocessing config for prepared_meshes_3
+# Output naming uses "prepared_meshs3" as requested.
+
+paths:
+  raw_root: '/data/prepared_meshes_3'
+  output_root: '/data/Output_minimal_data_prepared_meshs3'
+
+params:
+  raw_mesh_patterns:
+    - '*/01_mesh/*.obj'
+    - '*/01_Mesh/*.obj'
+    - '*_models/*/surface/*.vtp'
+  # Empty list = no dataset-prefix filtering (process all datasets).
+  raw_mesh_datasets: []
+  raw_mesh_dataset_separator: '_'
+
+  # resample_method: rdp | step | event | minimal | vmtk
+  resample_method: minimal
+  resample_epsilon: 0.01
+  resample_step: 0.01
+  resample_use_radius: true
+  resample_base_step: 0.05
+  resample_step_min: 0.005
+  resample_step_max: 0.02
+  resample_radius_scale: 0.1
+  resample_radius_mode: drds
+  resample_drds_threshold: 0.05
+  resample_drds_boost: 2.0
+  resample_curv_threshold: 5.0
+  resample_curv_boost: 0.5
+  resample_junction_window: 0.02
+  resample_junction_factor: 0.3
+  resample_junction_degree: 3
+  resample_event_step: 0.01
+  resample_event_window: 0.03
+  resample_geom_tol: 0.01
+  resample_rad_tol: 0.05
+  resample_w_rad: 1.0
+  resample_clean_tol: 0.00001
+  resample_minimal_prune_passes: 0
+  resample_junction_keep_k: 2
+  resample_junction_keep_window: 0.015
+  resample_max_points_per_branch: 120
+
+  vmtk_script: vmtknetworkextraction -advancementratio 1.05
+  extract_centerlines_timeout_s: 120
+  extract_centerlines_fallback_ratios: [1.02, 1.01]
+
+  normalize_overwrite: false
+  spline_fit_mode: robust
+  spline_fit_resample_only_if_needed: true
+  spline_fit_min_points: 12
+  spline_fit_resample: 128
+  spline_fallback_recenter: true
+  spline_fit_canonical_start: false
+  spline_fit_s: null
+  spline_fit_s_scale: 0.01
+  spline_fit_max_retries: 4
+  spline_fit_retry_factor: 10.0
+  # New strictness: if early points in a branch fail, fill with nearest valid spline in-branch
+  spline_fill_missing_with_nearest_valid: true
+
+flags:
+  copy_raw_data: true
+  normalize_meshes: false
+  extract_centerlines: true
+  resample_centerlines: true
+  centerlines_to_obj: true
+  vessels_to_obj: true
+  radius_arrays: true
+  splines: true
+  graphs: true
+  trees: true
+  graphs_splines: true
+  trees_splines: true

@@ -1,0 +1,83 @@
+# Dense healthy_vessel preprocessing variant.
+#
+# Reuses the already extracted/normalized healthy_vessel meshes and centerlines
+# from /data/Output_healthy_vessel, then writes all denser downstream artifacts
+# into new *_healthy_dense_v1 folders.
+#
+# Compared with pipeline_full.yaml:
+# - no raw copy / VMTK extraction is re-run
+# - centerlines are resampled with a smaller step and no per-branch cap
+# - spline fitting uses a denser evaluation grid
+
+paths:
+  raw_root:    '/data/healthy_vessel_staging_v2'
+  output_root: '/data/Output_healthy_vessel'
+
+  vessels_normalized: '/data/Output_healthy_vessel/vesselsNormalized'
+  centerlines:        '/data/Output_healthy_vessel/centerlines'
+  vessels_obj:        '/data/Output_healthy_vessel/vesselsOBJ'
+
+  centerlines_resampled:     '/data/Output_healthy_vessel/centerlinesResampled_healthy_dense_v1'
+  centerlines_resampled_obj: '/data/Output_healthy_vessel/centerlinesResampledOBJ_healthy_dense_v1'
+  radius_arrays:             '/data/Output_healthy_vessel/radius_arrays_healthy_dense_v1'
+  splines_coef:              '/data/Output_healthy_vessel/splines_healthy_dense_v1/coeficientes'
+  splines_knots:             '/data/Output_healthy_vessel/splines_healthy_dense_v1/knots'
+  grafos_splines:            '/data/Output_healthy_vessel/grafosSplines_healthy_dense_v1'
+  trees_splines:             '/data/Output_healthy_vessel/TreesSplines_healthy_dense_v1'
+
+params:
+  raw_mesh_patterns:
+    - '*/01_mesh/*.obj'
+  raw_mesh_datasets: []
+  raw_mesh_dataset_separator: '_'
+
+  # Dense resampling: roughly 2x the uniform centerline sampling density of
+  # the v7-style 0.04 setup, plus extra samples near radius changes/junctions.
+  resample_method: step
+  resample_step: 0.02
+  resample_use_radius: true
+  resample_base_step: 0.02
+  resample_step_min: 0.006
+  resample_step_max: 0.02
+  resample_radius_scale: 0.3
+  resample_radius_mode: drds
+  resample_drds_threshold: 0.05
+  resample_drds_boost: 4.0
+  resample_curv_threshold: 3.0
+  resample_curv_boost: 1.0
+  resample_junction_window: 0.02
+  resample_junction_factor: 0.5
+  resample_junction_degree: 3
+  resample_max_points_per_branch: null
+
+  vmtk_script: vmtknetworkextraction -advancementratio 1.05
+  extract_centerlines_timeout_s: 600
+  extract_centerlines_fallback_ratios: [1.02, 1.01, 1.005]
+
+  normalize_overwrite: false
+
+  spline_fit_mode: robust
+  spline_fit_resample_only_if_needed: true
+  spline_fit_min_points: 12
+  spline_fit_resample: 256
+  spline_fallback_recenter: true
+  spline_fill_missing_with_nearest_valid: true
+  spline_fit_canonical_start: false
+  spline_fit_s: null
+  spline_fit_s_scale: 0.01
+  spline_fit_max_retries: 4
+  spline_fit_retry_factor: 10.0
+
+flags:
+  copy_raw_data: false
+  normalize_meshes: false
+  extract_centerlines: false
+  resample_centerlines: true
+  centerlines_to_obj: true
+  vessels_to_obj: false
+  radius_arrays: true
+  splines: true
+  graphs: false
+  trees: false
+  graphs_splines: true
+  trees_splines: true

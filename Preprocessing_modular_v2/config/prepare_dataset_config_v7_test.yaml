@@ -1,0 +1,28 @@
+# Prepare v7 test split (no rotation augmentation — keep originals only).
+
+paths:
+  input:  /data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_500depth_v7/test
+  output: /data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_500depth_v7_prepared/test
+
+params:
+  k: 39
+  mode: pre_order_kcount
+  n_rotations: 1
+  pattern: "*.npy"
+  overwrite: true
+  seed: 125
+  spline_samples: 50
+  spline_smooth: 0.0000001
+  enable_rotation: false
+  enable_scaling: false
+  refit_splines: false
+  add_structure_features: false
+  structure_add_depth_norm: true
+  structure_add_parent_delta_xyz: true
+  structure_add_pathlen_root_norm: true
+  structure_depth_cap: 150.0
+  structure_pathlen_cap: 0.0
+  structure_delta_scale: 1.0
+  delta_xyz_parent: false
+  delta_xyz_root_zero: true
+  erase_output: true

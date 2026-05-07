@@ -1,0 +1,30 @@
+# ─────────────────────────────────────────────────────────────
+# Aneurysm Removal — Healthy Vessel Dataset Generation
+# ─────────────────────────────────────────────────────────────
+# Removes aneurysm from vessel meshes by:
+#   1. Growing removal zone around aneurysm until tube splits
+#   2. Finding the two tube-end boundary loops
+#   3. Bridging the two loops with interpolated strips
+# ─────────────────────────────────────────────────────────────
+
+paths:
+  input_dir: /data/prepared_meshes_3
+  output_dir: /data/prepared_meshes_3_healthy
+
+fill:
+  # Number of intermediate interpolated strips in the bridge
+  n_intermediate: 10
+  # Maximum ring growth before giving up
+  max_grow_rings: 50
+
+output:
+  filename: vessel_healthy.obj
+  copy_structure: true
+  copy_structure: true
+
+# Process only specific prefixes (empty = all)
+# filter_prefixes: ["aneux_", "intra_", "cmch_"]
+filter_prefixes: []
+
+# Number of parallel workers (0 = sequential)
+num_workers: 0

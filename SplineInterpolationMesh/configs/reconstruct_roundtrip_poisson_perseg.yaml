@@ -1,0 +1,30 @@
+# Roundtrip Poisson per-seg reconstruction (bugfixed pipeline)
+# Input: prepared GT splines (unnormalized coords, match GT meshes)
+
+paths:
+  input: /data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_100depth_prepared/val
+  output_dir: /data/roundtrip_test/smooth_recon_v2
+
+params:
+  pattern: "aneux_C0*.npy"
+  max_files: 0
+  overwrite: true
+  skip_rotations: true
+  convert_to_absolute: false
+  n_cp: 8
+  output_ext: ".obj"
+
+  method: poisson_perseg
+  target_spacing: 0.005
+  n_ring_pts: 64
+
+  poisson_depth: 8
+  poisson_n_cap_radial: 8
+  poisson_repoisson: true
+  poisson_repoisson_depth: 9
+  poisson_repoisson_samples: 120000
+
+  iso_remesh: true
+  iso_remesh_factor: 2.0
+  iso_remesh_iter: 3
+  iso_taubin_iter: 30

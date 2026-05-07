@@ -1,0 +1,79 @@
+# TreeGNN Flow Matching v4 — healthy (unfiltered) dataset variant.
+#
+# Same loss / architecture / schedule as treegnn_v4_physio_v2_clean.yaml,
+# but trained on the original (unfiltered) healthy_vessel dataset:
+#   TreesSplines_k_count_100depth_prepared_norm_healthy_vessel_relpos_nodecp_v1
+#
+# Settings recap (identical to v4_v2_clean):
+#   - logit_normal t-sampling, mean=0.0, std=1.4
+#   - GT-aligned physio (Murray off, tapering off, sym 0.78±0.22, sib_cos -0.5,
+#     depth_radius 0.5 @ 1.05, bif_angle 120±30)
+#   - v6 cross-section continuity (circ 1.0, nt 0.5, ns 0.3)
+#   - v8 regularizers (knot_mono 0.5, planarity 1.0, radius 3.0)
+#   - From scratch, 400 epochs, patience 80, lr 3e-4
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_healthy_vessel_relpos_nodecp_v1/train
+  val_dir:   derived_data/TreesSplines_k_count_100depth_prepared_norm_healthy_vessel_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching_TreeGNN_v2/output/treegnn_v4_physio_healthy
+  feature_stats: Stage2_FlowMatching/feature_stats_healthy.npz
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 256
+  n_heads: 8
+  n_layers: 10
+  max_nodes: 256
+  dropout: 0.1
+  self_conditioning: true
+  global_attn_every: 3
+
+params:
+  lr: 3.0e-4
+  weight_decay: 0.01
+  batch_size: 64
+  batch_size_val: 64
+  epochs: 400
+  patience: 80
+  warmup_steps: 1000
+  seed: 42
+  device: 0
+  num_workers: 4
+  rollout_interval: 25
+  rollout_steps: 50
+  rollout_samples: 8
+  save_every: 50
+  ema_decay: 0.999
+  resume: false
+
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  time_sampling: logit_normal
+  time_logit_normal_mean: 0.0
+  time_logit_normal_std: 1.4
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0
+  radius_weight: 3.0
+  circularity_weight: 1.0
+  normal_tangent_weight: 0.5
+  normal_smooth_weight: 0.3
+
+physio:
+  murray_weight: 0.0
+  murray_gamma: 3.0
+  bifurcation_angle_weight: 1.0
+  target_angle_deg: 120.0
+  angle_margin_deg: 30.0
+  tapering_weight: 0.0
+  symmetry_weight: 1.0
+  symmetry_target: 0.78
+  symmetry_margin: 0.22
+  sibling_cosine_weight: 3.0
+  sibling_cosine_target: -0.5
+  depth_radius_weight: 0.5
+  depth_radius_target_decay: 1.05

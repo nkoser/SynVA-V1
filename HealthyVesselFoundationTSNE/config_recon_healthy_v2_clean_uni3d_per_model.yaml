@@ -1,0 +1,87 @@
+# Per-model UNI3D t-SNE comparison.
+# The sbatch file loops over every folder in output/recon_healthy_v2_clean and
+# injects exactly one generated_mesh_roots entry per run.
+
+experiment:
+  name: recon_healthy_v2_clean_uni3d_per_model_tsne
+  output_dir: HealthyVesselFoundationTSNE/output/recon_healthy_v2_clean_uni3d_per_model
+
+data:
+  gt_mesh_roots:
+    - /data/healthy_vessel_decapped
+
+  generated_mesh_roots: {}
+
+  file_extensions: [".obj", ".ply", ".stl", ".off"]
+  include_regex:
+  exclude_regex_gt:
+  exclude_regex_generated: "(_gt|_gt_local|_local)$"
+
+  # Use only the real held-out test split from healthy_vessel_decapped.
+  split_csv: /data/data_split_real.csv
+  split_csv_delimiter: ";"
+  split_csv_uid_col: uid
+  split_csv_split_col: split
+  split_keep: [test]
+
+  # Distribution comparison: all available test GT meshes vs all available
+  # generated test meshes for the current model folder.
+  paired_only: false
+  max_cases:
+
+pointcloud:
+  points_per_mesh: 10000
+  sample_method: surface
+  normalize: unit_sphere
+  seed: 42
+  cache_dir: pointclouds
+  overwrite_cache: false
+
+embedding:
+  backend: uni3d
+  batch_size: 8
+  device: cuda
+  cache_file: embeddings.npz
+  overwrite_cache: false
+  l2_normalize: true
+
+  uni3d:
+    repo_path: /data/foundation_models/Uni3D
+    callable: HealthyVesselFoundationTSNE.backbones.uni3d_adapter:embed_point_clouds
+    checkpoint: /data/foundation_models/Uni3D_weights/modelzoo/uni3d-g/model.pt
+    model_name: create_uni3d
+    scale: giant
+    num_points: 10000
+    rgb: [0.4, 0.4, 0.4]
+    use_pointnet2_fallback: true
+    force_pointnet2_fallback: true
+    patch_dropout: 0.0
+    args: {}
+
+tsne:
+  perplexity: 30
+  init: pca
+  learning_rate: auto
+  metric: euclidean
+  random_state: 42
+  max_iter: 1500
+  standardize: false
+
+plot:
+  filename: uni3d_tsne_test_split.png
+  title: "UNI3D t-SNE: healthy-vessel test split vs generated model"
+  dpi: 240
+  point_size: 30
+  draw_pair_lines: false
+  show_axis_labels: false
+  show_grid: true
+  show_legend: true
+  legend_loc: best
+  legend_columns: 1
+  legend_fontsize: 9
+  marker_by_kind:
+    gt: o
+    generated: o
+  color_by_kind:
+    gt: "#2f6fbb"
+    generated: "#f28e2b"

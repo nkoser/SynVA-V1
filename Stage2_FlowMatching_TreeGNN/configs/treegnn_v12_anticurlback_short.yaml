@@ -1,0 +1,67 @@
+# TreeGNN v12 = v11 + sibling-separation loss to fix surface-handle artifacts.
+#
+# v11 (focalpos λ=4 + aligned45 dataset) reached Best Val 1.129 but the
+# rendered meshes still showed small ring-shaped surface handles at certain
+# bifurcations, where two child branches diverge initially and then curl
+# back close to one another, creating a closed loop in the surface.
+#
+# v12 adds a sibling-separation hinge loss: at every bifurcation, the L2
+# distance between the two child rel_pos vectors (in z-normalized space)
+# must exceed sibling_separation_eps. Computed on x_hat_1 so it shapes
+# the predicted geometry. Targets the topology issue directly.
+#
+# Everything else identical to v11.
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_aligned2_norm_relpos_nodecp_v1/train
+  val_dir:   derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_aligned2_norm_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching_TreeGNN/output/treegnn_v12_anticurlback_short
+  feature_stats: Stage2_FlowMatching/feature_stats_healthy_decap_dense_v2_aligned2.npz
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 512
+  d_model: 256
+  n_heads: 8
+  n_layers: 10
+  max_nodes: 384
+  dropout: 0.1
+  self_conditioning: true
+  global_attn_every: 3
+  depth_warp_alpha: 0.5
+
+params:
+  lr: 2.0e-4
+  weight_decay: 0.01
+  batch_size: 64
+  batch_size_val: 32
+  epochs: 400
+  patience: 60
+  warmup_steps: 500
+  seed: 42
+  device: 0
+  num_workers: 8
+  rollout_interval: 50
+  rollout_steps: 25
+  rollout_samples: 2
+  save_every: 50
+  ema_decay: 0.999
+  resume: false
+
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  time_sampling: logit_normal
+  time_logit_normal_mean: 0.0
+  time_logit_normal_std: 1.0
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0
+  radius_weight: 3.0
+  pos_focal_lambda: 4.0
+  pos_focal_sigma: 1.0
+  # NEW: anti-curl-back at bifurcations (siblings must diverge spatially).
+  sibling_separation_weight: 1.0
+  sibling_separation_eps: 0.5

@@ -1,0 +1,87 @@
+# UNI3D t-SNE on the clean-60 subset using GT meshes that were
+# reconstructed through the SAME spline-Poisson pipeline as the
+# predictions, so the embedding does not pick up recon-style bias.
+#
+# GT  : output/recon_gt_our_pipeline_clean60/*.obj  (60 OBJs, one per UID)
+# Gen : the per-model output/recon_healthy_decap_dense_v2_short/<model>/
+# Output base : HealthyVesselFoundationTSNE/output/recon_dense_v2_short_clean60_pipelinegt_uni3d_per_model
+
+experiment:
+  name: recon_dense_v2_short_clean60_pipelinegt_uni3d_per_model
+  output_dir: HealthyVesselFoundationTSNE/output/recon_dense_v2_short_clean60_pipelinegt_uni3d_per_model
+
+data:
+  gt_mesh_roots:
+    - output/recon_gt_our_pipeline_clean60
+
+  generated_mesh_roots: {}
+
+  file_extensions: [".obj", ".ply", ".stl", ".off"]
+  include_regex:
+  exclude_regex_gt:
+  exclude_regex_generated: "(_gt|_gt_local|_local)$"
+
+  # We do not need a split filter: the GT root only contains the 60
+  # clean-60 OBJs, and the generated dirs only contain valid predictions.
+  split_csv:
+  split_keep:
+
+  paired_only: false
+  max_cases:
+
+pointcloud:
+  points_per_mesh: 10000
+  sample_method: surface
+  normalize: unit_sphere
+  seed: 42
+  cache_dir: pointclouds
+  overwrite_cache: false
+
+embedding:
+  backend: uni3d
+  batch_size: 8
+  device: cuda
+  cache_file: embeddings.npz
+  overwrite_cache: false
+  l2_normalize: true
+
+  uni3d:
+    repo_path: /data/foundation_models/Uni3D
+    callable: HealthyVesselFoundationTSNE.backbones.uni3d_adapter:embed_point_clouds
+    checkpoint: /data/foundation_models/Uni3D_weights/modelzoo/uni3d-g/model.pt
+    model_name: create_uni3d
+    scale: giant
+    num_points: 10000
+    rgb: [0.4, 0.4, 0.4]
+    use_pointnet2_fallback: true
+    force_pointnet2_fallback: true
+    patch_dropout: 0.0
+    args: {}
+
+tsne:
+  perplexity: 30
+  init: pca
+  learning_rate: auto
+  metric: euclidean
+  random_state: 42
+  max_iter: 1500
+  standardize: false
+
+plot:
+  filename: uni3d_tsne_clean60_pipelinegt.png
+  title: "UNI3D t-SNE: pipeline-GT vs generated (clean 60)"
+  dpi: 240
+  point_size: 30
+  draw_pair_lines: false
+  show_axis_labels: false
+  show_grid: true
+  show_legend: true
+  legend_loc: best
+  legend_columns: 1
+  legend_fontsize: 9
+  marker_by_kind:
+    gt: o
+    generated: o
+  color_by_kind:
+    gt: "#2f6fbb"
+    generated: "#f28e2b"

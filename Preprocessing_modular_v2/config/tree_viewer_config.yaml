@@ -1,0 +1,80 @@
+# Tree viewer config
+
+paths:
+  # Input can be a directory or a single .npy file
+  input: '/data/Output_minimal_rough/TreesSplines/C0004.npy'
+  #input: 'DemoOutput/TreesSplines_20depth_prepared'  #../Data/stage1-limpias/numpy_preorder_augmented/p20/train #'DemoOutput/TreesSplines_20depth_prepared' #'../Data/stage1-limpias/numpy_preorder_augmented/p20/train' #'DemoOutput/TreesSplines_20depth_prepared' # '../Data/stage1-limpias/numpy_preorder_augmented/p20/train' #DemoOutput/TreesSplines_20depth
+  # Optional: set to a file path to save an image instead of showing a window
+  # output_image: DemoOutput/TreesSplines_20depth/view.png
+  # Optional: export centerline + splines as VTP
+  output_vtp: '/data/Output_minimal_rough/Views/C0004.vtp'
+  # Optional: export to separate VTP files
+  # output_vtp_centerline: DemoOutput/TreesSplines_20depth/view_centerline.vtp
+  # output_vtp_splines: DemoOutput/TreesSplines_20depth/view_splines.vtp
+
+params:
+  k: 39
+  mode: post_order # pre_order_kdir
+  pattern: "*.npy"
+  # Pick a file by name or index (0-based). Leave both empty for first file.
+  # file_name: C0001.npy
+  # file_index: 0
+
+  # Viewer modes: custom, legacy_splines, combined, all
+  viewer: all
+  figsize: [16, 16]
+
+  # Geometry normalization (optional)
+  normalize_xyz: false
+
+  # Radius settings for visualization
+  # For k=39, use edge-based radii derived from neighbor distances.
+  radius_mode: edge   # one of: edge, mean, first, norm3, fixed
+  radius_fixed: 0.01
+  radius_scale: 0.5
+  radius_min: 0.0
+  # radius_max: 0.2
+
+  # Rendering
+  scatter_size: 8.0
+  draw_edges: true
+  edge_color: "#444444"
+  edge_alpha: 0.5
+  edge_width: 1.0
+
+  check_root_zero: true
+  root_zero_tol: 1e-6
+
+  draw_root: true
+  root_color: "green"
+  root_marker: "*"
+  root_size: 80.0
+
+  # Spline rendering (custom viewer only, requires scipy)
+  draw_splines: true
+  spline_samples: 50
+  spline_color: "#cc0000"
+  spline_alpha: 0.6
+  spline_size: 0.5
+  spline_center_root: false
+  spline_render: points    # points | line | both
+  spline_line_width: 1.0
+  spline_line_color: "#cc0000"
+
+  # Optional: smooth centerline splines per branch (requires scipy)
+  draw_centerline_spline: false
+  centerline_spline_samples: 200
+  centerline_spline_smooth: 0.0
+  centerline_spline_color: "#0066cc"
+  centerline_spline_alpha: 0.8
+  centerline_spline_width: 1.5
+  centerline_spline_center_root: false
+
+  # VTP export toggles
+  vtp_include_centerline: true
+  vtp_include_splines: true
+
+  draw_spheres: true
+  max_spheres: 50
+  sphere_resolution: 12
+  sphere_alpha: 0.2

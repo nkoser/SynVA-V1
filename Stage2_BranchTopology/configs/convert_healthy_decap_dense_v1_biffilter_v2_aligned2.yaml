@@ -1,0 +1,8 @@
+paths:
+  train_dir: "/workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_aligned2_norm_relpos_nodecp_v1/train"
+  val_dir: "/workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_aligned2_norm_relpos_nodecp_v1/val"
+  output_dir: "/workspace/SynVA_V1/Stage2_BranchTopology/tokens/branch_topology_healthy_decap_dense_v1_biffilter_v2_aligned2"
+
+params:
+  train_limit: null
+  val_limit: null

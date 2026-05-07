@@ -1,0 +1,39 @@
+input_dir:  Stage2_FlowMatching_Physio/generated/physio_v2/npy_gt
+output_dir: Stage2_FlowMatching_Physio/generated/physio_v2/meshes_compare_gt/rmf_sdf_noleaf
+
+params:
+  k: 39
+  mode: pre_order_kcount
+
+  # SDF backend
+  use_cuda: true            # → sdf_variant: cuda → sdf.d3_fast_cuda + core_cuda
+  recon_mode: legacy
+  legacy_variant: robust
+
+  # Robust radius params (mirrors reconstruct_mesh_legacy_cuda_gt.yaml)
+  fallback_radius: 0.01
+  min_radius: 0.005
+  radius_cap: 0.05
+  sanity_percentile: 90
+  sanity_threshold: 0.15
+  smooth_union_k: 0.005
+
+  # Centerline quality (mirrors legacy_cuda)
+  centerline_samples: 1500
+  centerline_smooth: 0.0
+  centerline_t_mode: optimize
+  spline_samples: 128
+
+  # Marching cubes
+  step: 0.004
+  # Bounds computed from actual ring extents (not just node positions),
+  # so terminal rings never get clipped by the MC grid boundary.
+  bounds_pad_abs: 0.02
+
+  # Post-processing
+  smooth_iterations: 20
+  min_component_ratio: 0.03
+
+  output_ext: ".obj"
+  overwrite: true
+  verbose: true

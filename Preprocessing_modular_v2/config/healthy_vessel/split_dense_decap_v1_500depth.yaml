@@ -1,0 +1,19 @@
+paths:
+  input:  '/workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1'
+  output: '/workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1'
+
+params:
+  train: 0.8
+  val: 0.1
+  test: 0.1
+  seed: 42
+  pattern: "*.npy"
+  move: false
+  split_csv: /data/data_split_real.csv
+  split_csv_delimiter: ";"
+  split_csv_uid_col: uid
+  split_csv_split_col: split
+  split_csv_unmatched: train
+  erase_existing: true
+  stratify_by_length: true
+  stratify_bins: 10

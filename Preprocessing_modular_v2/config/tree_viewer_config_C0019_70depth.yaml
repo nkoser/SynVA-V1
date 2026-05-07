@@ -1,0 +1,38 @@
+# Single-tree visualization for C0019 (70depth, unnormalized source)
+
+paths:
+  input: "/data/Output_minimal_data/TreesSplines_k_count_70depth_prepared/test"
+  output_image: "/workspace/SynVA_V1/Stage1_New/test_outputs/tree_views/aneux_C0019_tree.png"
+
+params:
+  k: 39
+  mode: pre_order_kcount
+  pattern: "*.npy"
+  file_name: "aneux_C0019.npy"
+
+  viewer: combined
+  figsize: [12, 12]
+  normalize_xyz: false
+
+  scatter_size: 8.0
+  draw_edges: true
+  edge_color: "#444444"
+  edge_alpha: 0.55
+  edge_width: 1.0
+
+  draw_root: true
+  root_color: "green"
+  root_marker: "*"
+  root_size: 90.0
+
+  draw_splines: true
+  spline_samples: 60
+  spline_color: "#cc0000"
+  spline_alpha: 0.65
+  spline_size: 0.6
+  spline_center_root: false
+  spline_render: line
+  spline_line_width: 1.2
+  spline_line_color: "#cc0000"
+
+  draw_spheres: false

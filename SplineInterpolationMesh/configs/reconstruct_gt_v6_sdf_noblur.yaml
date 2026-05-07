@@ -1,0 +1,29 @@
+# SDF without Gaussian smoothing — keeps smooth bifurcations, reduces tube blur
+paths:
+  input: /data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_200depth_v6
+  output_dir: SplineInterpolationMesh/output/gt_v6_sdf_noblur
+
+params:
+  pattern: "*.npy"
+  max_files: 5
+  overwrite: true
+  skip_rotations: true
+  convert_to_absolute: false
+  output_ext: ".obj"
+
+  method: sdf
+  target_spacing: 0.005
+  n_ring_pts: 64
+
+  mc_resolution: 256
+  mc_padding: 0.02
+  mc_n_neighbors: 3
+  mc_smooth_k: 0.005
+  mc_level: 0.0
+  mc_narrow_band_factor: 3.0
+  mc_chunk_size: 200000
+  sdf_smooth_sigma: 0.0
+  sdf_erosion: 0.0
+
+  smooth_iterations: 10
+  decimate_ratio: 0

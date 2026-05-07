@@ -1,0 +1,14 @@
+paths:
+  train_dir: /workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_aligned2_norm/train
+  val_dir:   /workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_aligned2_norm/val
+  test_dir:  /workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_aligned2_norm/test
+  output_root:   /workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_aligned2_norm_relpos_nodecp_v1
+  metadata_path: /workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_aligned2_norm_relpos_nodecp_v1/local_geometry_metadata.json
+
+params:
+  pattern: "*.npy"
+  overwrite: false
+  position_slice: [1, 4]
+  control_point_slices: [[4, 12], [12, 20], [20, 28]]
+  relative_positions: true
+  node_local_control_points: true

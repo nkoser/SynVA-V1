@@ -1,0 +1,59 @@
+# TreeGNN v10 = v8 (best so far) trained on biffilter_v2_ALIGNED dataset.
+#
+# The aligned dataset re-projected ~7% of rings whose plane normal was
+# tilted >60° from their parent's. This addresses the visual ring-chaos
+# in regions like aneux_C0003's mid-section. Mean tilt-fraction per
+# tree dropped from 5.82% to 2.68% (-54%).
+#
+# Same loss recipe as v8 (focalpos λ=4, depth-warp, logit_normal).
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_aligned_norm_relpos_nodecp_v1/train
+  val_dir:   derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_aligned_norm_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching_TreeGNN/output/treegnn_v10_focalpos_aligned_short
+  feature_stats: Stage2_FlowMatching/feature_stats_healthy_decap_dense_v2_aligned.npz
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 512
+  d_model: 256
+  n_heads: 8
+  n_layers: 10
+  max_nodes: 384
+  dropout: 0.1
+  self_conditioning: true
+  global_attn_every: 3
+  depth_warp_alpha: 0.5
+
+params:
+  lr: 2.0e-4
+  weight_decay: 0.01
+  batch_size: 64
+  batch_size_val: 32
+  epochs: 400
+  patience: 60
+  warmup_steps: 500
+  seed: 42
+  device: 0
+  num_workers: 8
+  rollout_interval: 50
+  rollout_steps: 25
+  rollout_samples: 2
+  save_every: 50
+  ema_decay: 0.999
+  resume: false
+
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  time_sampling: logit_normal
+  time_logit_normal_mean: 0.0
+  time_logit_normal_std: 1.0
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0
+  radius_weight: 3.0
+  pos_focal_lambda: 4.0
+  pos_focal_sigma: 1.0

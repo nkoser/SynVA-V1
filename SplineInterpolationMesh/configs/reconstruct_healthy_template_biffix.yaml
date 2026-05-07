@@ -1,0 +1,32 @@
+# Per-Segment Poisson + Bifurcation Fix — generic template for healthy
+# All paths are overridden via reconstruct_mesh.py CLI:
+#   --input <npy_dir>  --output-dir <mesh_dir>
+# Params are identical to reconstruct_gt_v7_biffix.yaml / reconstruct_healthy_flow_v11b_healthy.yaml.
+
+paths:
+  input: ""           # overridden via --input
+  output_dir: ""      # overridden via --output-dir
+
+params:
+  pattern: "*.npy"
+  exclude_pattern: "*_gt.npy,*_local.npy,*_gt_local.npy"
+  max_files: 0       # 0 / null = no limit (handled by SplineInterpolationMesh/reconstruct.py)
+  overwrite: true
+  skip_rotations: true
+  convert_to_absolute: false
+  output_ext: ".obj"
+
+  method: poisson_perseg
+  target_spacing: 0.005
+  n_ring_pts: 64
+
+  poisson_depth: 8
+  poisson_n_cap_radial: 8
+  poisson_repoisson: true
+  poisson_repoisson_depth: 9
+  poisson_repoisson_samples: 120000
+
+  iso_remesh: true
+  iso_remesh_factor: 2.0
+  iso_remesh_iter: 3
+  iso_taubin_iter: 30

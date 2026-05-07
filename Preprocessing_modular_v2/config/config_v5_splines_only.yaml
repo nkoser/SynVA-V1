@@ -1,0 +1,65 @@
+# v5 pipeline config — re-runs only the splines + downstream tree steps.
+#
+# Prerequisite: earlier steps (copy_raw_data, normalize_meshes,
+# extract_centerlines, resample_centerlines, …) were already run as part of
+# the v4 pipeline and their outputs are reused from the same output_root.
+#
+# Changes vs v4:
+#   - spline_fill_missing_with_nearest_valid: true
+#     → near-degenerate rings use the nearest valid cross-section instead of
+#       collapsing to a phantom point at the (possibly zero) centerline coord.
+#   - _degenerate_tck_at_point returns None for world-origin points (bug fix in splines.py)
+#   - oversized rings are translated from nearest-valid instead of collapsed   (bug fix in splines.py)
+
+paths:
+  raw_root: '/data/prepared_meshes'
+  output_root: '/data/Output_minimal_data_prepared_meshs3'
+
+  # Override only the outputs changed by v5 so orig v4 intermediates stay intact.
+  # Other paths (vessels_obj, centerlines_resampled, radius_arrays, grafos …)
+  # resolve to the existing v4 data via output_root defaults.
+  splines_coef: '/data/Output_minimal_data_prepared_meshs3/splines_v5/coeficientes'
+  splines_knots: '/data/Output_minimal_data_prepared_meshs3/splines_v5/knots'
+  grafos_splines: '/data/Output_minimal_data_prepared_meshs3/grafosSplines_v5'
+  trees_splines:  '/data/Output_minimal_data_prepared_meshs3/TreesSplines_v5'
+
+params:
+  raw_mesh_patterns:
+    - '*/01_mesh/*.obj'
+    - '*/01_Mesh/*.obj'
+    - '*_models/*/surface/*.vtp'
+  raw_mesh_datasets: ['aneux']
+  raw_mesh_dataset_separator: '_'
+
+  resample_method: minimal
+  resample_epsilon: 0.01
+
+  # ── Spline fitting (v5 bug fixes active) ──────────────────────────────────
+  spline_fit_mode: robust
+  spline_fit_resample_only_if_needed: true
+  spline_fit_min_points: 12
+  spline_fit_resample: 128
+  spline_fallback_recenter: true
+  # KEY FIX: use nearest valid cross-section instead of degenerate zero ring
+  spline_fill_missing_with_nearest_valid: true
+  spline_fit_canonical_start: false
+  spline_fit_s: null
+  spline_fit_s_scale: 0.01
+  spline_fit_max_retries: 4
+  spline_fit_retry_factor: 10.0
+
+  normalize_overwrite: false
+
+flags:
+  copy_raw_data: false
+  normalize_meshes: false
+  extract_centerlines: false
+  resample_centerlines: false
+  centerlines_to_obj: false
+  vessels_to_obj: false
+  radius_arrays: false
+  splines: true          # ← re-run with bug fixes; overwrites splines/ in-place
+  graphs: false
+  trees: false
+  graphs_splines: true   # ← rebuild grafosSplines from new splines
+  trees_splines: true    # ← rebuild TreesSplines from new grafosSplines

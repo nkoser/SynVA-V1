@@ -1,0 +1,49 @@
+# Preview image export: render TreesSplines as PNG with centerline edges + spline points.
+paths:
+  input:      '/data/Output_healthy_vessel_preview/TreesSplines'
+  output_dir: '/data/Output_healthy_vessel_preview/TreeSplines_Vizualized'
+
+params:
+  pattern: '*.npy'
+  k: 39
+  mode: post_order
+
+  overwrite: true
+  continue_on_error: true
+  traceback_on_error: false
+
+  viewer: combined
+  figsize: [10, 8]
+  dpi: 200
+  image_suffix: ''
+
+  normalize_xyz: false
+  check_root_zero: false
+
+  radius_mode: edge
+  radius_fixed: 0.01
+  radius_scale: 0.5
+  radius_min: 0.0
+
+  draw_edges: true
+  draw_splines: true
+  draw_centerline_spline: false
+  draw_spheres: false
+
+  edge_color: "#444444"
+  edge_alpha: 0.5
+  edge_width: 1.0
+
+  draw_root: true
+  root_color: "green"
+  root_marker: "*"
+  root_size: 80.0
+
+  spline_samples: 50
+  spline_color: "#cc0000"
+  spline_alpha: 0.6
+  spline_size: 0.5
+  spline_center_root: false
+  spline_render: points
+  spline_line_width: 1.0
+  spline_line_color: "#cc0000"

@@ -1,0 +1,49 @@
+# Flow Matching v4 — planarity regularization + knot mono
+# Key changes from v3:
+#   - planarity_weight: 1.0 (penalizes non-planar cross-section CPs via SVD)
+#   - cp_weight: 2.0 (increased from 1.0, improve cs-size accuracy)
+#   - Same architecture as v2/v3 (d384/10L/8H)
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/train
+  val_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching/output/flow_v4
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 384
+  n_heads: 8
+  n_layers: 10
+  d_ff: 1536
+  max_nodes: 256
+  dropout: 0.1
+  tree_attn_hops: 0
+  self_conditioning: true
+
+params:
+  lr: 1.5e-4
+  weight_decay: 0.01
+  batch_size: 32
+  batch_size_val: 32
+  epochs: 600
+  patience: 100
+  warmup_steps: 500
+  seed: 42
+  device: 0
+  num_workers: 4
+  rollout_interval: 25
+  rollout_steps: 50
+  rollout_samples: 8
+  save_every: 50
+  ema_decay: 0.999
+
+loss:
+  pos_weight: 3.0
+  cp_weight: 2.0
+  knots_weight: 2.0
+  time_sampling: uniform
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0

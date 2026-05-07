@@ -1,0 +1,114 @@
+﻿# Preprocessing modular config
+
+paths:
+  # Root folder with raw meshes (e.g. /data/prepared_meshes/<case>/01_mesh/mesh.obj).
+  raw_root: '/data/prepared_meshes'
+
+  # Root folder where all outputs will be created.
+  output_root: '/data/Output_minimal_data'
+
+  # Optional overrides (uncomment to customize individual paths)
+  # raw_meshes: ../modelsRaw
+  # vessels_normalized: ../modelsNormalizado/vesselsNormalized
+  # centerlines: ../modelsNormalizado/centerlines
+  # centerlines_resampled: ../modelsNormalizado/centerlinesResampled
+  # centerlines_resampled_obj: ../modelsNormalizado/centerlinesResampledOBJ
+  # vessels_obj: ../modelsNormalizado/vesselsOBJ
+  # radius_arrays: ../modelsNormalizado/radius_arrays
+  # splines_coef: ../modelsNormalizado/splines/coeficientes
+  # splines_knots: ../modelsNormalizado/splines/knots
+  # grafos: ../modelsNormalizado/grafos
+  # trees_numpy: ../modelsNormalizado/TreesNumpy
+  # trees_serialized: ../modelsNormalizado/Trees
+  # grafos_splines: ../modelsNormalizado/grafosSplines
+  # trees_splines: ../modelsNormalizado/TreesSplines
+
+params:
+  # Raw mesh discovery (paths are relative to paths.raw_root / paths.raw_meshes)
+  # Legacy layout: "*_models/*/surface/*.vtp"
+  # prepared_meshes layout: "*/01_mesh/*.obj" (or "*/01_Mesh/*.obj")
+  raw_mesh_patterns:
+    - '*/01_mesh/*.obj'
+    - '*/01_Mesh/*.obj'
+    - '*_models/*/surface/*.vtp'
+  # Optional dataset filter from case prefix before "_" (empty = all datasets)
+  # Example: aneux_SNF00000303 -> dataset "aneux"
+  raw_mesh_datasets: ['aneux']
+  raw_mesh_dataset_separator: '_'
+
+  # resample_method: rdp | step | event | minimal | vmtk
+  resample_method: minimal
+  resample_epsilon: 0.01
+  # step-based resampling (used when resample_method: step or vmtk)
+  resample_step: 0.01
+  # optional radius-adaptive step sizing
+  resample_use_radius: true
+  resample_base_step: 0.05
+  resample_step_min: 0.005
+  resample_step_max: 0.02
+  resample_radius_scale: 0.1
+  # radius_mode: inverse | direct | drds
+  # drds uses step = step_max / (1 + drds_boost * max(|dr/ds| - drds_threshold, 0))
+  resample_radius_mode: drds
+  resample_drds_threshold: 0.05
+  resample_drds_boost: 2.0
+  # curvature densification (turning rate)
+  resample_curv_threshold: 5.0
+  resample_curv_boost: 0.5
+  # densify around junctions (degree >= resample_junction_degree)
+  resample_junction_window: 0.02
+  resample_junction_factor: 0.3
+  resample_junction_degree: 3
+  # event-based resampling params
+  resample_event_step: 0.01
+  resample_event_window: 0.03
+  # minimal adaptive resampling params
+  resample_geom_tol: 0.025
+  resample_rad_tol: 0.05
+  resample_w_rad: 1.0
+  resample_clean_tol: 0.00001
+  # 0 disables additional prune passes (keeps previous behavior).
+  resample_minimal_prune_passes: 0
+  # keep a small neighborhood around junctions in minimal mode
+  resample_junction_keep_k: 1
+  resample_junction_keep_window: 0.015
+  resample_max_points_per_branch: 50
+  # hard cap per branch (None disables)
+  #resample_max_points_per_branch: 10
+  vmtk_script: vmtknetworkextraction -advancementratio 1.05
+  # Per case timeout for network extraction (0 disables timeout).
+  extract_centerlines_timeout_s: 600
+  # Tried automatically if primary vmtk_script fails for a case.
+  extract_centerlines_fallback_ratios: [1.02, 1.01, 1.005]
+  # Optional extra full fallback scripts (advanced).
+  # extract_centerlines_fallback_scripts:
+  #   - 'vmtknetworkextraction -advancementratio 1.002'
+  normalize_overwrite: false
+  spline_fit_mode: robust
+  spline_fit_resample_only_if_needed: true
+  spline_fit_min_points: 12
+  spline_fit_resample: 128
+  # If a slice fit fails and last_good_tck is reused, translate it to current centerline point.
+  spline_fallback_recenter: true
+  # Use the nearest valid cross-section ring when a slice fit fails, instead of
+  # collapsing to a degenerate point ring (which causes phantom blobs at [0,0,0]).
+  spline_fill_missing_with_nearest_valid: true
+  spline_fit_canonical_start: false
+  spline_fit_s: null
+  spline_fit_s_scale: 0.01
+  spline_fit_max_retries: 4
+  spline_fit_retry_factor: 10.0
+
+flags:
+  copy_raw_data : True
+  normalize_meshes: False
+  extract_centerlines: true
+  resample_centerlines: true
+  centerlines_to_obj: true
+  vessels_to_obj: true
+  radius_arrays: true
+  splines: true
+  graphs: true
+  trees: true
+  graphs_splines: true 
+  trees_splines: true

@@ -1,0 +1,10 @@
+paths:
+  input_root:  '/workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_allcases_dense_v1_prepared'
+  output_root: '/workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_allcases_dense_v1_prepared_norm'
+
+params:
+  splits: ['train', 'val', 'test']
+  position_mode: geometry_clip
+  position_clip: 1.0
+  scale_mode: none
+  overwrite: false

@@ -1,0 +1,51 @@
+# Autoregressive FM v3 - anti-overfit healthy_vessel with absolute positions.
+
+data:
+  absolute_positions: true
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_healthy_vessel_relpos_nodecp_v1/train
+  val_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_healthy_vessel_relpos_nodecp_v1/val
+  output_dir: Stage2_AutoregressiveFM/output/ar_fm_v3_abspos_healthy
+  feature_stats: Stage2_FlowMatching/feature_stats_healthy_abspos.npz
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 256
+  n_heads: 8
+  n_layers: 6
+  d_ff: 1024
+  max_nodes: 256
+  dropout: 0.25
+  self_conditioning: true
+
+params:
+  lr: 1.2e-4
+  weight_decay: 0.05
+  batch_size: 32
+  batch_size_val: 32
+  epochs: 600
+  patience: 60
+  warmup_steps: 1500
+  seed: 42
+  device: 0
+  num_workers: 4
+  rollout_interval: 25
+  rollout_steps: 50
+  rollout_samples: 4
+  save_every: 50
+  ema_decay: 0.999
+  resume: false
+
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  time_sampling: uniform
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0
+  radius_weight: 3.0
+  frontier_sampling: uniform

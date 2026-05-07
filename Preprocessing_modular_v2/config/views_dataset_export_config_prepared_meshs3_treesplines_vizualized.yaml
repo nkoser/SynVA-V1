@@ -1,0 +1,31 @@
+# Batch export config: prepared_meshs3 TreesSplines -> VTP visualizations
+
+paths:
+  input: '/data/Output_minimal_data_prepared_meshs3/TreesSplines'
+  output_dir: '/data/Output_minimal_data_prepared_meshs3/TreeSplines_Vizualized'
+
+params:
+  pattern: '*.npy'
+  k: 39
+  mode: post_order
+
+  # Export one combined VTP per tree (centerline + spline loops)
+  save_combined: true
+  save_centerline: false
+  save_splines: false
+  combined_suffix: ''
+  centerline_suffix: '_centerline'
+  splines_suffix: '_splines'
+
+  overwrite: false
+  continue_on_error: true
+  traceback_on_error: false
+
+  normalize_xyz: false
+  spline_center_root: false
+  spline_anchor_to_node: false
+  spline_samples: 50
+
+  draw_centerline_spline: false
+  centerline_spline_samples: 200
+  centerline_spline_smooth: 0.0

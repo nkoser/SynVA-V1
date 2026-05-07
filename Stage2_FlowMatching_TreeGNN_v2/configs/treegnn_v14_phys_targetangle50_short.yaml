@@ -1,0 +1,71 @@
+# TreeGNN v14_phys = v5_phys + tight cerebral-specific bifurcation target.
+#
+# target_angle_deg=50, margin=20 → tolerated band 30°-70° (covers GT median 47°
+# closely). Tests whether tighter target overconstraints or sharpens.
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_norm_relpos_nodecp_v1/train
+  val_dir:   derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_norm_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching_TreeGNN_v2/output/treegnn_v14_phys_targetangle50_short
+  feature_stats: Stage2_FlowMatching/feature_stats_healthy_decap_dense_v2.npz
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 512
+  d_model: 256
+  n_heads: 8
+  n_layers: 10
+  max_nodes: 384
+  dropout: 0.1
+  self_conditioning: true
+  global_attn_every: 3
+  depth_warp_alpha: 0.5
+
+params:
+  lr: 2.0e-4
+  weight_decay: 0.01
+  batch_size: 64
+  batch_size_val: 32
+  epochs: 400
+  patience: 60
+  warmup_steps: 500
+  seed: 42
+  device: 0
+  num_workers: 8
+  rollout_interval: 50
+  rollout_steps: 25
+  rollout_samples: 2
+  save_every: 50
+  ema_decay: 0.999
+  resume: true
+
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  time_sampling: logit_normal
+  time_logit_normal_mean: 0.0
+  time_logit_normal_std: 1.0
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0
+  radius_weight: 3.0
+  circularity_weight: 1.0
+  normal_tangent_weight: 0.5
+  normal_smooth_weight: 0.3
+
+physio:
+  murray_weight: 0.0
+  murray_gamma: 3.0
+  bifurcation_angle_weight: 1.0
+  target_angle_deg: 50.0
+  angle_margin_deg: 20.0
+  tapering_weight: 0.0
+  symmetry_weight: 1.0
+  symmetry_target: 0.78
+  symmetry_margin: 0.22
+  sibling_cosine_weight: 3.0
+  sibling_cosine_target: -0.5
+  depth_radius_weight: 0.5
+  depth_radius_target_decay: 1.05

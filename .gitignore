@@ -1,0 +1,91 @@
+# --- bytecode / build ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+.eggs/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- editor / OS ---
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+
+# --- env / secrets ---
+.env
+.env.local
+
+# --- experiment outputs (paths used by the v2_clean pipeline) ---
+output/
+**/output/
+generated/
+**/generated/
+evaluation_results/
+evaluation_results_*/
+logs/
+**/logs/
+slurm-*.out
+*.log
+wandb/
+
+# --- derived / cached datasets (never check these into the repo) ---
+derived_data/
+derived_data_visualizations/
+tokens/
+**/tokens/
+reconstruction_config/
+
+# --- model checkpoints ---
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+
+# --- large binary artifacts ---
+*.npy
+*.npz
+*.h5
+*.hdf5
+
+# --- mesh / image binaries — opt out of accidentally tracking these ---
+*.obj
+*.ply
+*.stl
+*.vtk
+*.vtp
+*.nii
+*.nii.gz
+*.mhd
+*.raw
+
+# --- LaTeX build artifacts ---
+*.aux
+*.bbl
+*.blg
+*.brf
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.synctex.gz
+*.toc
+
+# --- jupyter ---
+.ipynb_checkpoints/
+
+# --- ad-hoc debug / scratch ---
+debug_*/
+scratch_*/
+tmp/
+.tmp/
+
+# --- agent / harness state ---
+.claude/
+.codex
+.codex/

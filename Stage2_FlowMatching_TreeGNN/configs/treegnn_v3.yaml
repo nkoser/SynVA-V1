@@ -1,0 +1,59 @@
+# Tree-GNN Flow Matching v3: Depth-Warped Time
+#
+# Same architecture as v1 (best: d256/10L, 14.8M params)
+# NEW: depth_warp_alpha = 0.5
+#
+# Depth-warped time:  t_eff[node] = t ^ (1 + alpha * depth / d_max)
+#   - Root (d=0): t_eff = t  → denoised first (coarse skeleton)
+#   - Deep leaf (d=d_max): t_eff = t^(1+alpha) < t → denoised later (fine details)
+#   - Creates automatic coarse-to-fine hierarchical denoising
+#
+# This is a minimal but principled change: the tree structure directly
+# controls the denoising schedule per node.
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/train
+  val_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_v4_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching_TreeGNN/output/treegnn_v3
+  feature_stats: Stage2_FlowMatching/feature_stats.npz
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 256
+  n_heads: 8
+  n_layers: 10
+  max_nodes: 256
+  dropout: 0.1
+  self_conditioning: true
+  global_attn_every: 3
+  depth_warp_alpha: 0.5    # NEW: controls coarse-to-fine strength
+
+params:
+  lr: 2.0e-4
+  weight_decay: 0.01
+  batch_size: 32
+  batch_size_val: 32
+  epochs: 600
+  patience: 100
+  warmup_steps: 500
+  seed: 42
+  device: 0
+  num_workers: 4
+  rollout_interval: 25
+  rollout_steps: 50
+  rollout_samples: 8
+  save_every: 50
+  ema_decay: 0.999
+  resume: false
+
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  time_sampling: uniform
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0
+  radius_weight: 3.0

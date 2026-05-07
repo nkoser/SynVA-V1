@@ -1,0 +1,29 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# reconstruct_loft_config_gt_v5.yaml
+# Tube-loft reconstruction config (GT v5 dataset)
+# ──────────────────────────────────────────────────────────────────────────────
+
+# Input .npy files (one file = one tree)
+input_dir:  Stage2_FlowMatching_Physio/generated/physio_v2/npy_gt_v5_norm
+
+# Output directory (triangle meshes as .obj)
+output_dir: Stage2_FlowMatching_Physio/generated/physio_v2/meshes_compare_gt/loft_gt_v5
+
+params:
+  # ── tree format ─────────────────────────────────────────────────────────────
+  k: 39              # token width: 3 xyz + 36 ring (8+8+8+12)
+  mode: pre_order_kcount  # serialization mode matching training data
+
+  # ── mesh resolution ──────────────────────────────────────────────────────────
+  n_angular: 64      # circumferential samples per ring cross-section
+                     # Higher → smoother, more polygons.  64 is a good default.
+  n_interp:  3       # interpolated rings between each pair of stored rings
+                     # 0 = only stored rings; 3 gives 4× denser tube columns.
+  min_step:  0.0008  # minimum inter-node distance; nodes closer than this are
+                     # treated as phantom padding and dropped.
+
+  # ── output ───────────────────────────────────────────────────────────────────
+  output_ext: ".obj"
+  pattern:    "*.npy"
+  overwrite:  true
+  verbose:    true

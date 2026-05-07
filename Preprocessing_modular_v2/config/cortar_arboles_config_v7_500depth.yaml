@@ -1,0 +1,15 @@
+# Convert v7 trees (post_order, k=39) to pre_order_kcount format with depth cap.
+# Max depth 500 — v7 has ~3× more nodes than v6 due to adaptive sampling.
+
+paths:
+  input_dir: '/data/Output_minimal_data_prepared_meshs3/TreesSplines_v7'
+  output_dir: '/data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_500depth_v7'
+
+params:
+  max_depth: 500
+  k: 39
+  input_mode: post_order
+  output_mode: pre_order_kcount
+  glob: "*.npy"
+  overwrite: true
+  log_every: 50

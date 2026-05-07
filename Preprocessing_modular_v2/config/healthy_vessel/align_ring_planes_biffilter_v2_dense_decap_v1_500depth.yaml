@@ -1,0 +1,13 @@
+paths:
+  train_dir: /workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_norm/train
+  val_dir:   /workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_norm/val
+  test_dir:  /workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_norm/test
+  output_root: /workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_aligned_norm
+
+params:
+  # Edges with |cos(n_parent, n_child)| < this are re-projected.
+  # 0.5 ⇔ 60° tilt
+  tilt_cos_threshold: 0.5
+  # 0=keep parent's normal exactly, 1=use local tangent only.
+  # 0.5 = blend equally.
+  tangent_blend: 0.5

@@ -1,0 +1,28 @@
+paths:
+  checkpoint: Stage2_FlowMatching_TreeGNN/output/treegnn_v4_healthy_decap_dense_v2_short/best_model.pt
+  val_dir: derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v2_norm_relpos_nodecp_v1/test
+  feature_stats: Stage2_FlowMatching/feature_stats_healthy_decap_dense_v2.npz
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 512
+  d_model: 256
+  n_heads: 8
+  n_layers: 10
+  max_nodes: 384
+  self_conditioning: true
+  global_attn_every: 3
+  depth_warp_alpha: 0.5
+
+params:
+  n_samples: 100
+  n_steps: 100
+  seed: 42
+  device: 0
+  use_ema: true
+  solver: euler
+  time_schedule: linear
+  velocity_scale: 1.0
+  rp_damp: 0.75
+  output_dir: Stage2_FlowMatching_TreeGNN/generated/treegnn_v4_healthy_decap_dense_v2_short

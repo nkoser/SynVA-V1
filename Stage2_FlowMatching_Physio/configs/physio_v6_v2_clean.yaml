@@ -1,0 +1,84 @@
+# Auto-generated from physio_v6_healthy.yaml by submit_all_stage2_v2_clean.sh
+# v2_clean dataset variant (biffilter_v1).
+# Flow Matching + Physio v6 — adds cross-section continuity losses on top of v5.
+#
+# v5 → v6 delta:
+#   + circularity_weight     1.0   (CPs lie on a circle, not arbitrary closed curve)
+#   + normal_tangent_weight  0.5   (cross-section plane ⊥ centerline tangent)
+#   + normal_smooth_weight   0.3   (parent/child plane normals aligned, no twist/flip)
+#
+# Motivation: v5 has good radius continuity but bad shape (eccentricity 0.23
+# vs GT 0.13) and bad plane orientation (normal_flip p90 0.73 vs GT 0.44),
+# producing the visible "knubbel"/twisted look in reconstructed meshes.
+#
+# Warm-start from v5 best so we can measure delta quickly.
+
+paths:
+  train_dir: derived_data/TreesSplines_k_count_100depth_prepared_biffilter_v1_norm_relpos_nodecp_v1/train
+  val_dir:   derived_data/TreesSplines_k_count_100depth_prepared_biffilter_v1_norm_relpos_nodecp_v1/val
+  output_dir: Stage2_FlowMatching_Physio/output/physio_v6_v2_clean
+  feature_stats: Stage2_FlowMatching/feature_stats_healthy.npz
+  init_from: Stage2_FlowMatching_Physio/output/physio_v5_healthy/best_model.pt
+  init_strict: true
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 384
+  n_heads: 8
+  n_layers: 10
+  d_ff: 1536
+  max_nodes: 256
+  dropout: 0.1
+  tree_attn_hops: 0
+  self_conditioning: true
+  depth_in_geometry: true
+
+params:
+  lr: 1.0e-4            # warm-start from v5; bumped slightly with bigger batch
+  weight_decay: 0.01
+  batch_size: 128       # B200 has plenty of room (was 32 → underutilized)
+  batch_size_val: 128
+  epochs: 200
+  patience: 60
+  warmup_steps: 200
+  seed: 42
+  device: 0
+  num_workers: 4
+  rollout_interval: 25
+  rollout_steps: 50
+  rollout_samples: 8
+  save_every: 50
+  ema_decay: 0.999
+  resume: false
+
+loss:
+  pos_weight: 1.0
+  cp_weight: 1.0
+  knots_weight: 1.0
+  time_sampling: uniform
+  self_cond_prob: 0.5
+  knot_mono_weight: 0.5
+  planarity_weight: 1.0
+  radius_weight: 3.0
+  eccentricity_weight: 0.0
+  # NEW v6 continuity losses
+  circularity_weight: 1.0
+  normal_tangent_weight: 0.5
+  normal_smooth_weight: 0.3
+
+physio:
+  murray_weight: 2.0
+  murray_gamma: 3.0
+  bifurcation_angle_weight: 1.0
+  target_angle_deg: 120.0
+  angle_margin_deg: 30.0
+  tapering_weight: 1.0
+  symmetry_weight: 1.0
+  symmetry_target: 0.67
+  symmetry_margin: 0.15
+  sibling_cosine_weight: 3.0
+  sibling_cosine_target: -0.5
+  depth_radius_weight: 3.0
+  depth_radius_target_decay: 0.95

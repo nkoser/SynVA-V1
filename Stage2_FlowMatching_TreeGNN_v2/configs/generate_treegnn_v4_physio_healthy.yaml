@@ -1,0 +1,29 @@
+# Generation config for treegnn_v4_physio_healthy — original (unfiltered) test split.
+paths:
+  checkpoint: Stage2_FlowMatching_TreeGNN_v2/output/treegnn_v4_physio_healthy/best_model.pt
+  val_dir: derived_data/TreesSplines_k_count_100depth_prepared_norm_healthy_vessel_relpos_nodecp_v1/test
+  feature_stats: Stage2_FlowMatching/feature_stats_healthy.npz
+
+model:
+  geom_dim: 39
+  k_classes: 3
+  max_depth: 128
+  d_model: 256
+  n_heads: 8
+  n_layers: 10
+  max_nodes: 256
+  dropout: 0.0
+  self_conditioning: true
+  global_attn_every: 3
+
+params:
+  n_samples: 100
+  n_steps: 100
+  seed: 42
+  device: 0
+  use_ema: true
+  solver: euler
+  time_schedule: linear
+  velocity_scale: 1.0
+  rp_damp: 0.75
+  output_dir: Stage2_FlowMatching_TreeGNN_v2/generated/treegnn_v4_physio_healthy

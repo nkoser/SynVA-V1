@@ -1,0 +1,25 @@
+paths:
+  train_dir: /workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v1/train
+  val_dir:   /workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v1/val
+  test_dir:  /workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v1/test
+
+  output_root: /workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v1_norm
+  stats_path:  /workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_decap_dense_v1_prepared_biffilter_v1_norm/normalization_stats.json
+
+params:
+  pattern: "*.npy"
+  method: geometry_clip
+  quantile: 99.9
+  clip_value: 3.0
+  feature_start: 1
+  feature_end: null
+  geometry_isotropic: true
+  geometry_normalize_knots: false
+  geometry_knots_quantile: 99.9
+  preserve_root_zero_xyz: true
+  root_position: first
+  root_xyz_indices: [1, 2, 3]
+  root_eps: 1e-8
+  eps: 1e-6
+  in_place: false
+  overwrite: false

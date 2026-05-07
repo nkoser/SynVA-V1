@@ -1,0 +1,40 @@
+# Batch export config: tree arrays -> VTP views
+
+paths:
+  # Input can be a directory with many *.npy trees or a single .npy file.
+  input: '/data/Output_minimal_data/TreesSplines'
+  # If omitted, defaults to sibling folder named "Views" next to input.
+  output_dir: '/data/Output_minimal_data/Views'
+
+params:
+  pattern: '*.npy'
+  k: 39
+  mode: post_order
+
+  # Export selection
+  save_combined: true
+  save_centerline: false
+  save_splines: false
+  combined_suffix: ''
+  centerline_suffix: '_centerline'
+  splines_suffix: '_splines'
+
+  # IO behavior
+  overwrite: false
+  continue_on_error: true
+  traceback_on_error: false
+
+  # Keep false for original coordinates.
+  normalize_xyz: false
+
+  # Keep false to avoid additional translation of spline loops.
+  spline_center_root: false
+  spline_anchor_to_node: false
+
+  spline_samples: 50
+
+  # Optional smooth centerline spline per branch
+  # false = raw centerline branches, true = fitted centerline spline
+  draw_centerline_spline: false
+  centerline_spline_samples: 200
+  centerline_spline_smooth: 0.0

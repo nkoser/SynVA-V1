@@ -1,0 +1,40 @@
+input_dir:  Stage2_FlowMatching_Physio/generated/physio_v2/npy_gt_v5_norm
+output_dir: Stage2_FlowMatching_Physio/generated/physio_v2/meshes_compare_gt/rmf_sdf_gt_v5_norm_segments
+
+params:
+  k: 39
+  mode: pre_order_kcount
+
+  # Use segment-based SDF (avoids ~2x trunk node duplication of branch-based)
+  use_segments: true
+
+  # SDF backend
+  use_cuda: true
+  recon_mode: legacy
+  legacy_variant: robust
+
+  fallback_radius: 0.01
+  min_radius: 0.005
+  radius_cap: 0.20
+  sanity_percentile: 90
+  sanity_threshold: 0.25
+  smooth_union_k: 0.008
+
+  # Leaf-end endcap reduction
+  leaf_taper: true
+  leaf_taper_min_r: 0.018
+
+  centerline_samples: 1500
+  centerline_smooth: 0.0
+  centerline_t_mode: optimize
+  spline_samples: 128
+
+  step: 0.003
+  bounds_pad_abs: 0.02
+
+  smooth_iterations: 15
+  min_component_ratio: 0.03
+
+  output_ext: ".obj"
+  overwrite: true
+  verbose: true

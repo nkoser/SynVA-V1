@@ -1,0 +1,15 @@
+# Dataset split config for prepared_meshes_3 run.
+
+paths:
+  input: /data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_70depth
+  output: /data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_70depth
+
+params:
+  train: 0.8
+  val: 0.1
+  test: 0.1
+  seed: 42
+  pattern: '*.npy'
+  move: false
+  stratify_by_length: true
+  stratify_bins: 10

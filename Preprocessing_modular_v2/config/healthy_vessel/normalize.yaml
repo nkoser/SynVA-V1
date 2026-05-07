@@ -1,0 +1,32 @@
+# Feature normalization, v4-equivalent (geometry_clip, knots untouched).
+# Output dataset name uses "healthy_vessel" instead of "v4".
+paths:
+  train_dir: /data/Output_healthy_vessel/TreesSplines_k_count_100depth_prepared/train
+  val_dir:   /data/Output_healthy_vessel/TreesSplines_k_count_100depth_prepared/val
+  test_dir:  /data/Output_healthy_vessel/TreesSplines_k_count_100depth_prepared/test
+
+  output_root: /data/Output_healthy_vessel/TreesSplines_k_count_100depth_prepared_norm_healthy_vessel
+  stats_path:  /data/Output_healthy_vessel/TreesSplines_k_count_100depth_prepared_norm_healthy_vessel/normalization_stats.json
+
+params:
+  pattern: "*.npy"
+
+  method: geometry_clip
+  quantile: 99.9
+  clip_value: 3.0
+
+  feature_start: 1
+  feature_end: null
+
+  geometry_isotropic: true
+  geometry_normalize_knots: false
+  geometry_knots_quantile: 99.9
+
+  preserve_root_zero_xyz: true
+  root_position: first
+  root_xyz_indices: [1, 2, 3]
+  root_eps: 1e-8
+
+  eps: 1e-6
+  in_place: false
+  overwrite: false

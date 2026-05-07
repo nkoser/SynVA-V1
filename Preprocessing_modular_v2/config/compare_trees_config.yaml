@@ -1,0 +1,34 @@
+# Compare two trees (overlay)
+
+paths:
+  tree_a: '/data/Output/Result/Stage1_New/reconstructions_stage1/C0004.npy'
+  tree_b: '/data/Output_minimal/TreesSplines_k_count_100depth_prepared/test/C0004.npy'
+  output_image: '/data/Output/Result/Stage1_New/tree_comparison_C0004.png'
+
+params:
+  k: 39
+  mode_a: pre_order_kdir
+  mode_b: pre_order_kdir
+  # threshold_a: 1e-3
+  threshold_b: null
+  # mask_threshold: 1e-3
+  edges_source: each  # each | a
+  draw_splines: True
+  spline_samples: 50
+  spline_color_a: "#d62728"
+  spline_color_b: "#9467bd"
+  spline_alpha: 0.6
+  spline_size: 0.5
+  spline_center_root: false
+  align_root: false
+  draw_edges: true
+  edge_alpha: 0.6
+  edge_width: 1.0
+  node_size: 8.0
+  color_a: "#1f77b4"
+  color_b: "#ff7f0e"
+  draw_root: true
+  root_marker: "x"
+  root_size: 60.0
+  title: "Tree overlay"
+  figsize: [ 10, 10 ]

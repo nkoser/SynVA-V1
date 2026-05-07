@@ -1,0 +1,8 @@
+paths:
+  input_dir:  '/workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_allcases_dense_v1/val'
+  output_dir: '/workspace/SynVA_V1/derived_data/TreesSplines_k_count_500depth_healthy_allcases_dense_v1_prepared/val'
+
+params:
+  rotations_per_sample: 10
+  overwrite: false
+  log_every: 50

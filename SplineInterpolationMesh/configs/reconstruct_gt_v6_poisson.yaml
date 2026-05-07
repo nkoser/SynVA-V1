@@ -1,0 +1,20 @@
+# Screened Poisson Reconstruction with exact ring normals
+
+paths:
+  input: /data/Output_minimal_data_prepared_meshs3/TreesSplines_k_count_200depth_v6
+  output_dir: output/gt_v6_poisson
+
+params:
+  pattern: "*.npy"
+  max_files: 5
+  overwrite: true
+  skip_rotations: true
+  convert_to_absolute: false
+  output_ext: ".obj"
+
+  method: poisson
+  target_spacing: 0.005
+  n_ring_pts: 64
+
+  poisson_depth: 8
+  poisson_linear_fit: false
